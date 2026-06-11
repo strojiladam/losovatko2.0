@@ -170,7 +170,7 @@
             <button id="btn-add-set-dropdown"
               class="w-full text-left px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-[#0000dc] transition-colors flex items-center gap-2 rounded-xl">
               <i data-lucide="layers" class="w-4 h-4"></i>
-              Přidat list okruhů
+              Přidat sestavu
             </button>
             <div class="h-px bg-slate-100 my-1"></div>
             <button id="btn-manage-questions"
@@ -306,7 +306,7 @@
 
         sets.push({
           id: crypto.randomUUID(),
-          name: 'List 1',
+          name: 'Sestava 1',
           categories: initialCategories,
           isRollingAll: false
         });
@@ -321,7 +321,7 @@
       console.error("Failed to parse sets from local storage.", e);
       sets = [{
         id: crypto.randomUUID(),
-        name: 'List 1',
+        name: 'Sestava 1',
         categories: [{ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false }],
         isRollingAll: false
       }];
@@ -355,7 +355,7 @@
                </div>
                <span class="shrink-0 ml-2 text-xs font-bold ${isActive ? 'bg-indigo-50 text-[#0000dc]' : 'bg-slate-100 text-slate-400'} px-2.5 py-1 rounded-full">${set.categories.length} okruhů</span>
             </button>
-            <button class="btn-delete-set p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors shrink-0" data-id="${set.id}" title="Smazat list">
+            <button class="btn-delete-set p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors shrink-0" data-id="${set.id}" title="Smazat sestavu">
                <i data-lucide="trash-2" class="w-4 h-4"></i>
             </button>
           </div>
@@ -366,7 +366,7 @@
         <div class="flex items-center justify-between text-slate-400 mb-2 px-1 cursor-pointer select-none group btn-toggle-collapse">
            <div class="flex items-center gap-2">
              <i data-lucide="layers" class="w-5 h-5"></i>
-             <h2 class="text-xs font-bold uppercase tracking-wider">Listy okruhů</h2>
+             <h2 class="text-xs font-bold uppercase tracking-wider">Sestavy</h2>
            </div>
            <button class="p-1 rounded-full bg-slate-100 group-hover:bg-slate-200 transition-colors">
              <i data-lucide="chevron-up" class="w-4 h-4 text-slate-500 transition-transform duration-300 ${isSetsCollapsed ? 'rotate-180' : ''} collapse-icon"></i>
@@ -406,7 +406,7 @@
         const btn = input.closest('.set-item');
 
         const finishEditing = () => {
-          const newName = input.value.trim() || 'Nový list';
+          const newName = input.value.trim() || 'Nová sestava';
           const setId = btn.getAttribute('data-id');
           const set = sets.find(s => s.id === setId);
           if (set && set.name !== newName) {
@@ -872,7 +872,7 @@
     function addSet() {
       const newSet = {
         id: crypto.randomUUID(),
-        name: `List ${sets.length + 1}`,
+        name: `Sestava ${sets.length + 1}`,
         categories: [{ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false }],
         isRollingAll: false
       };
