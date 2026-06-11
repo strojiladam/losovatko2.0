@@ -19,7 +19,6 @@
         transform: translateY(0);
       }
     }
-  
 
     @keyframes pop-in {
       0% {
@@ -231,6 +230,7 @@
               </div>
               <div class="flex justify-end gap-2 shrink-0 pt-3 border-t border-slate-100">
                 <button id="btn-qm-delete" class="px-4 py-2 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors hidden mr-auto">Smazat</button>
+                <button id="btn-qm-restore" class="px-3 py-2 text-slate-400 hover:text-[#0000dc] hover:bg-indigo-50 rounded-xl transition-colors hidden" title="Obnovit výchozí otázky"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></button>
                 <button id="btn-qm-save" class="px-6 py-2 text-sm font-bold text-white bg-[#0000dc] hover:bg-[#0000dc]/90 rounded-xl shadow-sm transition-colors">Uložit</button>
               </div>
             </div>
@@ -910,6 +910,7 @@
     const qmQCount = document.getElementById('qm-q-count');
     const btnQmSave = document.getElementById('btn-qm-save');
     const btnQmDelete = document.getElementById('btn-qm-delete');
+    const btnQmRestore = document.getElementById('btn-qm-restore');
 
     function saveQuestionSets() {
       localStorage.setItem('stateExamQuestionSets', JSON.stringify(questionSets));
@@ -972,6 +973,12 @@
       qmSetQuestions.value = formatQuestions(qs.questions);
       qmQCount.textContent = 'Otázek: ' + qs.questions.length;
       btnQmDelete.classList.remove('hidden');
+
+      if (typeof STATNICOVE_SADY !== 'undefined' && STATNICOVE_SADY.find(s => s.id === id)) {
+         btnQmRestore.classList.remove('hidden');
+      } else {
+         btnQmRestore.classList.add('hidden');
+      }
     }
 
     btnManageQuestions.addEventListener('click', (e) => {
@@ -1025,6 +1032,18 @@
     qmSetQuestions.addEventListener('input', () => {
       const questions = parseQuestions(qmSetQuestions.value);
       qmQCount.textContent = 'Otázek: ' + questions.length;
+    });
+
+    btnQmRestore.addEventListener('click', () => {
+      if (!qmEditingId) return;
+      const defaultSet = typeof STATNICOVE_SADY !== 'undefined' ? STATNICOVE_SADY.find(s => s.id === qmEditingId) : null;
+      if (defaultSet) {
+        if (confirm('Opravdu chcete přepsat tuto sadu původními státnicovými otázkami? Všechny vaše úpravy v tomto listu budou ztraceny.')) {
+           qmSetName.value = defaultSet.name;
+           qmSetQuestions.value = formatQuestions(defaultSet.questions);
+           qmSetQuestions.dispatchEvent(new Event('input'));
+        }
+      }
     });
 
     qmSetQuestions.addEventListener('change', () => {
