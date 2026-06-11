@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Losovátko Otázek</title>
+  <title>Losovátko otázek</title>
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
@@ -60,6 +60,36 @@
       }
     }
 
+    @keyframes dice-shake {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+
+      20% {
+        transform: translate(-3px, 2px) rotate(-12deg);
+      }
+
+      40% {
+        transform: translate(3px, -1px) rotate(12deg);
+      }
+
+      60% {
+        transform: translate(-2px, -2px) rotate(-6deg);
+      }
+
+      80% {
+        transform: translate(2px, 2px) rotate(8deg);
+      }
+
+      100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+    }
+
+    .animate-dice-shake {
+      animation: dice-shake 0.2s linear infinite;
+    }
+
     .animate-fade-in-down {
       animation: fade-in-down 0.4s ease-out forwards;
     }
@@ -82,7 +112,6 @@
   <div class="h-1.5 w-full bg-[#0000dc]"></div>
   <div class="w-full mx-auto px-4 pt-4 pb-12 sm:px-6 lg:px-8">
 
-    <!-- Header -->
     <header class="mb-6 pb-6 border-b border-slate-200/80 flex flex-col items-start animate-fade-in-down w-full">
       <div class="flex justify-start">
         <svg class="h-12 sm:h-14 md:h-16 w-auto" xmlns="http://www.w3.org/2000/svg" viewBox="920 400 2300 540">
@@ -92,13 +121,10 @@
       </div>
     </header>
 
-    <!-- Desktop main layout: Categories + Config -->
     <main class="flex flex-wrap gap-6 justify-start w-full">
       <div id="categories-container" class="contents"></div>
 
-      <!-- Action Card -->
       <div class="w-full sm:w-[420px] h-[340px] shrink-0 flex flex-row gap-4" id="action-card">
-        <!-- Draw & Reset Actions -->
         <div class="flex-1 flex flex-col gap-4">
           <button id="btn-draw-all"
             class="w-full flex-1 relative overflow-hidden group flex flex-col items-center justify-center gap-3 p-6 rounded-[32px] text-xl font-bold text-white transition-all transform hover:-translate-y-1 hover:shadow-xl bg-[#0000dc] hover:bg-[#0000dc]/90 shadow-[#0000dc]/30">
@@ -113,7 +139,6 @@
           </button>
         </div>
 
-        <!-- Add Category Button -->
         <button id="btn-add-category"
           class="w-[96px] h-full shrink-0 border-[2px] border-dashed border-slate-300 rounded-[32px] text-slate-400 font-bold hover:border-[#0000dc] hover:text-[#0000dc] hover:bg-[#0000dc]/5 transition-all flex flex-col items-center justify-center shadow-sm bg-white/50 hover:shadow-md group">
           <i data-lucide="plus" class="w-9 h-9 group-hover:scale-110 transition-transform"></i>
@@ -121,9 +146,8 @@
       </div>
     </main>
 
-    <!-- Footer -->
     <footer class="mt-12 pt-6 border-t border-slate-200/80 text-center text-sm text-slate-400 w-full">
-      @2026 Adam Strojil | Katedra psychologie FSS MU
+      © 2026 Adam Strojil | Katedra psychologie FSS MU
     </footer>
   </div>
   <script>
@@ -184,8 +208,7 @@
       </div>
 
       <div class="w-full flex-1 flex justify-center p-3 bg-slate-50/80 rounded-[20px] border border-slate-100/60 overflow-hidden min-h-0 result-area">
-         <!-- Result goes here -->
-      </div>
+         </div>
     </div>
   `;
 
@@ -220,14 +243,38 @@
       const resultArea = cardEl.querySelector('.result-area');
 
       if (category.isRolling) {
+        const safeMin = Math.min(category.min, category.max);
+        const safeMax = Math.max(category.min, category.max);
+
+        // Build a strip of random numbers and the final result.
+        const itemsCount = category.rollItemsCount || 25;
+        const duration = category.rollDuration || 4;
+        let trackHTML = '';
+        for (let i = 0; i < itemsCount - 1; i++) {
+          trackHTML += `<div class="w-32 h-full flex items-center justify-center text-4xl font-bold text-slate-300 opacity-80 shrink-0">${getRandomInt(safeMin, safeMax)}</div>`;
+        }
+        // The actual winning number
+        trackHTML += `<div class="w-32 h-full flex items-center justify-center text-[4rem] font-black text-[#0f172a] shrink-0">${category.result}</div>`;
+
         resultArea.innerHTML = `
-      <div class="text-center flex flex-col justify-center w-full h-full">
-        <div class="mx-auto w-10 h-10 text-[#0000dc]/30 animate-spin">
-          <i data-lucide="shuffle" class="w-10 h-10"></i>
-        </div>
-      </div>
-    `;
-        lucide.createIcons({ root: resultArea });
+          <div class="relative w-full h-full overflow-hidden rounded-[20px] bg-white shadow-[inset_0_2px_10px_rgba(0,0,0,0.06)] border border-slate-100/50" style="-webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent); mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);">
+             <div class="absolute h-full flex flex-row" id="track-${category.id}" style="left: 50%; transform: translateX(-64px); transition: transform ${duration}s ease-out;">
+                ${trackHTML}
+             </div>
+          </div>
+        `;
+
+        // Wait for the DOM to render, then trigger the leftward sliding animation
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            const track = document.getElementById(`track-${category.id}`);
+            if (track) {
+              // 128px is the width of the 'w-32' class. Move it left by all items minus the first one.
+              const distance = (itemsCount - 1) * 128;
+              track.style.transform = `translateX(calc(-64px - ${distance}px))`;
+            }
+          });
+        });
       } else if (category.result !== null) {
         resultArea.innerHTML = `
       <div class="text-center flex flex-col justify-center w-full h-full">
@@ -277,8 +324,10 @@
       if (isRollingAll) {
         btnDrawAll.className = "w-full flex-1 relative overflow-hidden group flex flex-col items-center justify-center gap-3 p-6 rounded-[32px] text-xl font-bold text-white transition-all transform bg-slate-300 cursor-not-allowed shadow-none";
         btnDrawAll.disabled = true;
+
+        // REMOVED: text-[#0000dc] and text-slate-500 so it goes back to crisp white
         btnDrawAll.innerHTML = `
-      <div class="animate-spin mb-2"><i data-lucide="shuffle" class="w-11 h-11"></i></div>
+      <div class="animate-dice-shake mb-2"><i data-lucide="dices" class="w-11 h-11"></i></div>
       <span class="tracking-wide text-2xl">Losuji...</span>
     `;
         lucide.createIcons({ root: btnDrawAll });
@@ -361,28 +410,29 @@
       isRollingAll = true;
       updateActionButtons();
 
-      categories.forEach(c => {
-        c.isRolling = true;
-        c.result = null;
-        updateCategoryUI(c.id);
-      });
-
-      // Artificial delay for suspense
-      await new Promise(r => setTimeout(r, 600));
-
-      for (let i = 0; i < categories.length; i++) {
-        const c = categories[i];
+      const promises = categories.map(async (c, index) => {
         const safeMin = Math.min(c.min, c.max);
         const safeMax = Math.max(c.min, c.max);
-        c.isRolling = false;
         c.result = getRandomInt(safeMin, safeMax);
+        c.isRolling = true;
+
+        // Sequentially stop each card 0.8 seconds after the previous one
+        c.rollDuration = 2 + (index * 0.8);
+        // Add roughly 6 more items per 0.8 seconds of extra spin so the speed remains similar
+        c.rollItemsCount = 15 + (index * 6);
+
+        updateCategoryUI(c.id);
+
+        await new Promise(r => setTimeout(r, c.rollDuration * 1000));
+
+        c.isRolling = false;
+        c.rollDuration = undefined;
+        c.rollItemsCount = undefined;
         updateCategoryUI(c.id);
         saveState();
+      });
 
-        if (i < categories.length - 1) {
-          await new Promise(r => setTimeout(r, 300));
-        }
-      }
+      await Promise.all(promises);
 
       isRollingAll = false;
       updateActionButtons();
@@ -392,17 +442,23 @@
       const c = categories.find(cat => cat.id === id);
       if (!c) return;
 
-      c.isRolling = true;
-      c.result = null;
-      updateCategoryUI(id);
-
-      await new Promise(r => setTimeout(r, 600));
-
       const safeMin = Math.min(c.min, c.max);
       const safeMax = Math.max(c.min, c.max);
-      c.isRolling = false;
+
+      // Calculate the target FIRST so the carousel knows where to stop
       c.result = getRandomInt(safeMin, safeMax);
-      updateCategoryUI(id);
+      c.isRolling = true;
+      c.rollDuration = 2;
+      c.rollItemsCount = 15;
+      updateCategoryUI(id); // Triggers the sliding animation
+
+      // Wait exactly as long as the CSS transition takes
+      await new Promise(r => setTimeout(r, c.rollDuration * 1000));
+
+      c.isRolling = false;
+      c.rollDuration = undefined;
+      c.rollItemsCount = undefined;
+      updateCategoryUI(id); // Snaps to the clean, final static state
       saveState();
       updateActionButtons();
     }
