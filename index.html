@@ -105,6 +105,23 @@
     .animate-spring-in {
       animation: spring-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #e2e8f0;
+      border-radius: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #cbd5e1;
+    }
   </style>
 </head>
 
@@ -122,6 +139,7 @@
     </header>
 
     <main class="flex flex-wrap gap-6 justify-start w-full">
+      <div id="sets-container" class="w-full empty:hidden flex"></div>
       <div id="categories-container" class="contents"></div>
 
       <div class="w-full sm:w-[420px] h-[340px] shrink-0 flex flex-row gap-4" id="action-card">
@@ -139,10 +157,90 @@
           </button>
         </div>
 
-        <button id="btn-add-category"
-          class="w-[96px] h-full shrink-0 border-[2px] border-dashed border-slate-300 rounded-[32px] text-slate-400 font-bold hover:border-[#0000dc] hover:text-[#0000dc] hover:bg-[#0000dc]/5 transition-all flex flex-col items-center justify-center shadow-sm bg-white/50 hover:shadow-md group">
-          <i data-lucide="plus" class="w-9 h-9 group-hover:scale-110 transition-transform"></i>
-        </button>
+        <div class="w-[96px] h-full shrink-0 flex flex-col gap-4 relative">
+          <!-- Gear Icon Button -->
+          <button id="btn-settings"
+            class="w-full h-[72px] shrink-0 border border-slate-200 rounded-[24px] text-slate-400 font-bold hover:border-slate-300 hover:text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center shadow-sm bg-white hover:shadow-md group">
+            <i data-lucide="settings" class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300"></i>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div id="settings-dropdown"
+            class="hidden absolute top-[80px] right-0 w-48 bg-white border border-slate-100 rounded-2xl shadow-xl z-50 p-1.5 animate-pop-in origin-top-right">
+            <button id="btn-add-set-dropdown"
+              class="w-full text-left px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-[#0000dc] transition-colors flex items-center gap-2 rounded-xl">
+              <i data-lucide="layers" class="w-4 h-4"></i>
+              Přidat list okruhů
+            </button>
+            <div class="h-px bg-slate-100 my-1"></div>
+            <button id="btn-manage-questions"
+              class="w-full text-left px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-[#0000dc] transition-colors flex items-center gap-2 rounded-xl">
+              <i data-lucide="database" class="w-4 h-4"></i>
+              Správa otázek
+            </button>
+          </div>
+
+          <!-- Plus Button -->
+          <button id="btn-add-category"
+            class="w-full flex-1 border-[2px] border-dashed border-slate-300 rounded-[32px] text-slate-400 font-bold hover:border-[#0000dc] hover:text-[#0000dc] hover:bg-[#0000dc]/5 transition-all flex flex-col items-center justify-center shadow-sm bg-white/50 hover:shadow-md group">
+            <i data-lucide="plus" class="w-9 h-9 group-hover:scale-110 transition-transform"></i>
+          </button>
+        </div>
+      </div>
+      <!-- Question Manager Modal -->
+      <div id="question-manager-modal" class="hidden fixed inset-0 bg-slate-900/50 flex items-center justify-center z-[100] backdrop-blur-sm">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl h-[600px] max-h-[90vh] flex flex-col m-4 animate-pop-in">
+          <div class="p-5 border-b border-slate-100 flex justify-between items-center shrink-0">
+            <div class="flex items-center gap-3">
+              <div class="p-2 bg-indigo-50 text-[#0000dc] rounded-xl">
+                <i data-lucide="database" class="w-5 h-5"></i>
+              </div>
+              <h2 class="text-lg font-bold text-slate-800">Správa sad otázek</h2>
+            </div>
+            <button id="btn-close-qm" class="text-slate-400 hover:text-slate-600 transition-colors p-2 rounded-xl hover:bg-slate-50">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+          
+          <div class="flex-1 flex overflow-hidden">
+            <!-- Left side: List of sets -->
+            <div class="w-1/3 border-r border-slate-100 flex flex-col">
+              <div class="p-3 border-b border-slate-100 shrink-0">
+                <button id="btn-qm-add-set" class="w-full flex items-center justify-center gap-2 py-2 px-4 bg-slate-50 hover:bg-slate-100 text-[#0000dc] text-sm font-bold rounded-xl transition-colors border border-slate-200">
+                  <i data-lucide="plus" class="w-4 h-4"></i> Nová sada
+                </button>
+              </div>
+              <div id="qm-sets-list" class="flex-1 overflow-y-auto p-2 custom-scrollbar flex flex-col gap-1">
+                <!-- JS rendered -->
+              </div>
+            </div>
+            
+            <!-- Right side: Edit area -->
+            <div id="qm-edit-area" class="w-2/3 p-5 flex flex-col gap-4 overflow-y-auto custom-scrollbar hidden">
+              <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Název sady</label>
+                <input type="text" id="qm-set-name" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0000dc]">
+              </div>
+              <div class="flex-1 flex flex-col min-h-[200px]">
+                <div class="flex justify-between items-end mb-1.5">
+                  <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Otázky (jedna na řádek)</label>
+                  <span class="text-[10px] font-bold text-[#0000dc] bg-indigo-50 px-2 py-1 rounded-lg" id="qm-q-count">Otázek: 0</span>
+                </div>
+                <textarea id="qm-set-questions" class="w-full flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0000dc] resize-none whitespace-pre-wrap custom-scrollbar" placeholder="Zkopírujte sem sloupec ze spreadsheetu..."></textarea>
+              </div>
+              <div class="flex justify-end gap-2 shrink-0 pt-3 border-t border-slate-100">
+                <button id="btn-qm-delete" class="px-4 py-2 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-colors hidden mr-auto">Smazat</button>
+                <button id="btn-qm-save" class="px-6 py-2 text-sm font-bold text-white bg-[#0000dc] hover:bg-[#0000dc]/90 rounded-xl shadow-sm transition-colors">Uložit</button>
+              </div>
+            </div>
+            
+            <!-- Right side: Empty state -->
+            <div id="qm-empty-state" class="w-2/3 flex flex-col items-center justify-center text-slate-400 p-8 text-center">
+              <i data-lucide="database" class="w-12 h-12 mb-4 opacity-20"></i>
+              <p class="text-sm font-medium">Vyberte sadu vlevo nebo vytvořte novou</p>
+            </div>
+          </div>
+        </div>
       </div>
     </main>
 
@@ -150,65 +248,266 @@
       © 2026 Adam Strojil | Katedra psychologie FSS MU
     </footer>
   </div>
+  <script src="otazky.js"></script>
   <script>
+    const setsContainer = document.getElementById('sets-container');
     const categoriesContainer = document.getElementById('categories-container');
     const btnDrawAll = document.getElementById('btn-draw-all');
     const btnResetAll = document.getElementById('btn-reset-all');
     const btnAddCategory = document.getElementById('btn-add-category');
+    const btnSettings = document.getElementById('btn-settings');
+    const settingsDropdown = document.getElementById('settings-dropdown');
+    const btnAddSet = document.getElementById('btn-add-set-dropdown');
 
-    let categories = [];
-    let isRollingAll = false;
+    let sets = [];
+    let activeSetId = null;
+    let isSetsCollapsed = localStorage.getItem('stateExamSetsCollapsed') === 'true';
+    let questionSets = JSON.parse(localStorage.getItem('stateExamQuestionSets')) || [];
+    
+    // Auto-load state exam questions if they haven't been loaded yet
+    if (!localStorage.getItem('statniceSetsLoaded_v1') && typeof STATNICOVE_SADY !== 'undefined') {
+      const existingIds = questionSets.map(s => s.id);
+      const newSets = STATNICOVE_SADY.filter(s => !existingIds.includes(s.id));
+      
+      if (newSets.length > 0) {
+        questionSets = [...newSets, ...questionSets];
+        localStorage.setItem('stateExamQuestionSets', JSON.stringify(questionSets));
+      }
+      localStorage.setItem('statniceSetsLoaded_v1', 'true');
+    }
+
+    let qmEditingId = null;
 
     // Load from local storage
     try {
-      const saved = localStorage.getItem('stateExamCategories');
-      if (saved) {
-        categories = JSON.parse(saved);
+      const savedSets = localStorage.getItem('stateExamSets');
+      if (savedSets) {
+        sets = JSON.parse(savedSets);
+        activeSetId = localStorage.getItem('stateExamActiveSetId') || sets[0].id;
+        
+        // Force reset any stuck rolling states from previous sessions
+        sets.forEach(set => {
+           set.isRollingAll = false;
+           set.categories.forEach(c => {
+              c.isRolling = false;
+           });
+        });
+      } else {
+        // Migration from old version
+        const savedCats = localStorage.getItem('stateExamCategories');
+        let initialCategories = [];
+        if (savedCats) {
+          initialCategories = JSON.parse(savedCats);
+        }
+        if (initialCategories.length === 0) {
+          initialCategories.push({ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false });
+        }
+
+        sets.push({
+          id: crypto.randomUUID(),
+          name: 'List 1',
+          categories: initialCategories,
+          isRollingAll: false
+        });
+        activeSetId = sets[0].id;
+
+        // Save the migrated state immediately
+        localStorage.setItem('stateExamSets', JSON.stringify(sets));
+        localStorage.setItem('stateExamActiveSetId', activeSetId);
+        localStorage.removeItem('stateExamCategories');
       }
     } catch (e) {
-      console.error("Failed to parse categories from local storage.");
+      console.error("Failed to parse sets from local storage.", e);
+      sets = [{
+        id: crypto.randomUUID(),
+        name: 'List 1',
+        categories: [{ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false }],
+        isRollingAll: false
+      }];
+      activeSetId = sets[0].id;
     }
 
-    if (categories.length === 0) {
-      categories.push({ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false });
+    function getActiveSet() {
+      return sets.find(s => s.id === activeSetId) || sets[0];
     }
 
     function saveState() {
-      localStorage.setItem('stateExamCategories', JSON.stringify(categories));
+      localStorage.setItem('stateExamSets', JSON.stringify(sets));
+      localStorage.setItem('stateExamActiveSetId', activeSetId);
+    }
+
+    function renderSetsCard() {
+      const div = document.createElement('div');
+      const heightClass = isSetsCollapsed ? 'h-auto' : 'h-[340px]';
+      div.className = `w-full sm:w-[420px] ${heightClass} shrink-0 bg-slate-50/50 border-[2px] border-dashed border-slate-200 rounded-[32px] p-6 flex flex-col gap-4 animate-fade-in-down transition-all duration-300`;
+
+      let listHTML = '';
+      sets.forEach((set) => {
+        const isActive = set.id === activeSetId;
+        listHTML += `
+          <div class="flex items-center gap-1 w-full">
+            <button class="set-item flex-1 flex items-center justify-between p-3 rounded-2xl transition-all ${isActive ? 'bg-white shadow-sm border border-slate-200 text-[#0000dc]' : 'bg-transparent text-slate-500 hover:bg-slate-100 border border-transparent'}" data-id="${set.id}">
+               <div class="flex items-center gap-3 flex-1 min-w-0">
+                 <i data-lucide="${isActive ? 'folder-open' : 'folder'}" class="w-5 h-5 shrink-0 ${isActive ? 'text-[#0000dc]' : 'text-slate-400'}"></i>
+                 <span class="set-name-display font-semibold text-sm truncate text-left w-full" title="Dvojitým kliknutím přejmenujete">${set.name}</span>
+                 <input type="text" class="set-name-input hidden w-full bg-slate-50 border border-slate-200 rounded-md px-2 py-0.5 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0000dc]" value="${set.name}">
+               </div>
+               <span class="shrink-0 ml-2 text-xs font-bold ${isActive ? 'bg-indigo-50 text-[#0000dc]' : 'bg-slate-100 text-slate-400'} px-2.5 py-1 rounded-full">${set.categories.length} okruhů</span>
+            </button>
+            <button class="btn-delete-set p-2.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors shrink-0" data-id="${set.id}" title="Smazat list">
+               <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+        `;
+      });
+
+      div.innerHTML = `
+        <div class="flex items-center justify-between text-slate-400 mb-2 px-1 cursor-pointer select-none group btn-toggle-collapse">
+           <div class="flex items-center gap-2">
+             <i data-lucide="layers" class="w-5 h-5"></i>
+             <h2 class="text-xs font-bold uppercase tracking-wider">Listy okruhů</h2>
+           </div>
+           <button class="p-1 rounded-full bg-slate-100 group-hover:bg-slate-200 transition-colors">
+             <i data-lucide="chevron-up" class="w-4 h-4 text-slate-500 transition-transform duration-300 ${isSetsCollapsed ? 'rotate-180' : ''} collapse-icon"></i>
+           </button>
+        </div>
+        <div class="flex-1 overflow-y-auto flex flex-col gap-2 pr-2 custom-scrollbar transition-all duration-300 ${isSetsCollapsed ? 'hidden' : ''}">
+           ${listHTML}
+        </div>
+      `;
+
+      div.querySelectorAll('.set-item').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          if (getActiveSet().isRollingAll) return; // Prevent switching while rolling
+          const setId = e.currentTarget.getAttribute('data-id');
+          if (setId !== activeSetId) {
+            activeSetId = setId;
+            saveState();
+            renderAll();
+          }
+        });
+
+        // Double click to edit
+        const display = btn.querySelector('.set-name-display');
+        const input = btn.querySelector('.set-name-input');
+
+        btn.addEventListener('dblclick', (e) => {
+          e.stopPropagation();
+          display.classList.add('hidden');
+          input.classList.remove('hidden');
+          input.focus();
+          input.select();
+        });
+      });
+
+      // Event Listeners for Left Sidebar
+      div.querySelectorAll('.set-name-input').forEach(input => {
+        const btn = input.closest('.set-item');
+
+        const finishEditing = () => {
+          const newName = input.value.trim() || 'Nový list';
+          const setId = btn.getAttribute('data-id');
+          const set = sets.find(s => s.id === setId);
+          if (set && set.name !== newName) {
+            set.name = newName;
+            saveState();
+            renderAll();
+          } else {
+            input.classList.add('hidden');
+            btn.querySelector('.set-name-display').classList.remove('hidden');
+          }
+        };
+
+        input.addEventListener('blur', finishEditing);
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            input.blur();
+          }
+        });
+        input.addEventListener('click', (e) => e.stopPropagation());
+      });
+
+      div.querySelectorAll('.btn-delete-set').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (getActiveSet().isRollingAll) return;
+          removeSet(btn.getAttribute('data-id'));
+        });
+      });
+
+      div.querySelector('.btn-toggle-collapse').addEventListener('click', () => {
+        isSetsCollapsed = !isSetsCollapsed;
+        localStorage.setItem('stateExamSetsCollapsed', isSetsCollapsed);
+
+        const listContainer = div.querySelector('.custom-scrollbar');
+        const icon = div.querySelector('.collapse-icon');
+
+        if (isSetsCollapsed) {
+          div.classList.replace('h-[340px]', 'h-auto');
+          listContainer.classList.add('hidden');
+          if (icon) icon.classList.add('rotate-180');
+        } else {
+          div.classList.replace('h-auto', 'h-[340px]');
+          listContainer.classList.remove('hidden');
+          if (icon) icon.classList.remove('rotate-180');
+        }
+      });
+
+      lucide.createIcons({ root: div });
+      return div;
+    }
+
+    function removeSet(id) {
+      sets = sets.filter(s => s.id !== id);
+      if (activeSetId === id && sets.length > 0) {
+        activeSetId = sets[0].id;
+      }
+      saveState();
+      renderAll();
     }
 
     function renderCategoryCard(category) {
       const div = document.createElement('div');
-      div.className = "bg-white rounded-[32px] shadow-sm border border-slate-200 overflow-hidden w-full sm:w-[420px] h-[340px] flex flex-col shrink-0 animate-pop-in";
+      div.className = "bg-white rounded-[32px] shadow-sm border border-slate-200 overflow-hidden w-full sm:w-[420px] h-[340px] flex flex-col shrink-0 animate-pop-in relative";
       div.id = `cat-${category.id}`;
 
       div.innerHTML = `
     <div class="p-5 flex flex-col gap-3 flex-1 h-full">
-      <div class="flex justify-between items-center text-slate-500 px-1 pt-0">
+      <div class="flex justify-between items-center text-slate-500 px-1 pt-0 relative">
           <label class="text-xs font-bold uppercase tracking-wider">Okruh</label>
-          <button class="btn-delete p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors" title="Smazat okruh">
-            <i data-lucide="trash-2" class="w-4 h-4"></i>
-          </button>
+          <div class="flex gap-1 items-center">
+            <button class="btn-assign p-1 text-slate-400 hover:text-[#0000dc] hover:bg-indigo-50 rounded-full transition-colors" title="Přiřadit sadu otázek">
+              <i data-lucide="database" class="w-4 h-4"></i>
+            </button>
+            <button class="btn-delete p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors" title="Smazat okruh">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
+          
+          <div class="assign-dropdown hidden absolute top-full right-8 mt-1 w-56 bg-white border border-slate-100 rounded-xl shadow-lg z-10 p-1.5 animate-pop-in origin-top-right max-h-48 overflow-y-auto custom-scrollbar">
+          </div>
       </div>
 
-      <div class="shrink-0">
-        <input type="text" class="cat-name w-full bg-slate-50 border border-slate-100 rounded-[16px] px-4 py-2.5 text-base font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0000dc] focus:border-transparent transition-all" placeholder="Okruh..." value="${category.name}">
+      <div class="shrink-0 relative">
+        <input type="text" class="cat-name w-full bg-slate-50 border border-slate-100 rounded-[16px] px-4 py-2.5 text-base font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0000dc] focus:border-transparent transition-all disabled:opacity-80 disabled:bg-slate-100 disabled:text-slate-600 disabled:cursor-not-allowed" placeholder="Okruh..." value="${category.name}" ${category.questionSetId ? 'disabled' : ''}>
+        ${category.questionSetId ? `<i data-lucide="lock" class="absolute right-4 top-3 w-4 h-4 text-slate-400"></i>` : ''}
       </div>
       
       <div class="flex items-center gap-2 shrink-0">
-        <div class="flex-1">
+        <div class="flex-1 relative">
           <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 ml-1">Od</label>
-          <input type="number" class="cat-min w-full bg-slate-50 border border-slate-100 rounded-[16px] px-3 py-2 text-center font-mono text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0000dc] transition-all" value="${category.min}">
+          <input type="number" class="cat-min w-full bg-slate-50 border border-slate-100 rounded-[16px] px-3 py-2 text-center font-mono text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0000dc] transition-all disabled:opacity-80 disabled:bg-slate-100 disabled:text-slate-600 disabled:cursor-not-allowed" value="${category.min}" ${category.questionSetId ? 'disabled' : ''}>
         </div>
         <div class="pt-4 text-slate-400 font-medium">-</div>
-        <div class="flex-1">
+        <div class="flex-1 relative">
           <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 ml-1">Do</label>
-          <input type="number" class="cat-max w-full bg-slate-50 border border-slate-100 rounded-[16px] px-3 py-2 text-center font-mono text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0000dc] transition-all" value="${category.max}">
+          <input type="number" class="cat-max w-full bg-slate-50 border border-slate-100 rounded-[16px] px-3 py-2 text-center font-mono text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0000dc] transition-all disabled:opacity-80 disabled:bg-slate-100 disabled:text-slate-600 disabled:cursor-not-allowed" value="${category.max}" ${category.questionSetId ? 'disabled' : ''}>
         </div>
       </div>
 
       <div class="w-full flex-1 flex justify-center p-3 bg-slate-50/80 rounded-[20px] border border-slate-100/60 overflow-hidden min-h-0 result-area">
-         </div>
+      </div>
     </div>
   `;
 
@@ -233,6 +532,54 @@
         saveState();
       });
 
+      const assignDropdown = div.querySelector('.assign-dropdown');
+      div.querySelector('.btn-assign').addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelectorAll('.assign-dropdown').forEach(d => {
+          if (d !== assignDropdown) d.classList.add('hidden');
+        });
+        
+        assignDropdown.innerHTML = `<div class="text-[10px] font-bold text-slate-400 px-2 py-1.5 uppercase tracking-wider">Sady otázek</div>`;
+        if (questionSets.length === 0) {
+           assignDropdown.innerHTML += `<div class="px-2 py-2 text-xs text-slate-500 text-center">Žádné sady. Vytvořte v nastavení.</div>`;
+        } else {
+           questionSets.forEach(qs => {
+              const btn = document.createElement('button');
+              btn.className = `w-full text-left px-3 py-2 text-sm font-medium ${category.questionSetId === qs.id ? 'bg-indigo-50 text-[#0000dc]' : 'text-slate-700 hover:bg-slate-50'} transition-colors rounded-lg flex justify-between items-center mb-0.5`;
+              btn.innerHTML = `<span class="truncate pr-2">${qs.name}</span> <span class="text-[10px] text-slate-400 font-bold bg-slate-100 px-1.5 py-0.5 rounded shrink-0">${qs.questions.length}</span>`;
+              btn.onclick = (ev) => {
+                 ev.stopPropagation();
+                 if (category.questionSetId === qs.id) {
+                    category.questionSetId = null;
+                 } else {
+                    category.questionSetId = qs.id;
+                    category.name = qs.name;
+                    category.min = 1;
+                    category.max = qs.questions.length;
+                 }
+                 saveState();
+                 renderAll();
+              };
+              assignDropdown.appendChild(btn);
+           });
+           
+           if (category.questionSetId) {
+              const unassignBtn = document.createElement('button');
+              unassignBtn.className = "w-full text-left px-3 py-2 text-xs font-bold text-red-500 hover:bg-red-50 transition-colors rounded-lg mt-1 border-t border-slate-100 pt-2 pb-1.5 flex items-center justify-center gap-1";
+              unassignBtn.innerHTML = `<i data-lucide="unlink" class="w-3 h-3"></i> Zrušit propojení`;
+              unassignBtn.onclick = (ev) => {
+                 ev.stopPropagation();
+                 category.questionSetId = null;
+                 saveState();
+                 renderAll();
+              };
+              assignDropdown.appendChild(unassignBtn);
+           }
+        }
+        assignDropdown.classList.toggle('hidden');
+        lucide.createIcons({ root: assignDropdown });
+      });
+
       // Init lucide icons in this chunk
       lucide.createIcons({ root: div });
 
@@ -241,6 +588,14 @@
 
     function updateResultArea(category, cardEl) {
       const resultArea = cardEl.querySelector('.result-area');
+
+      let questionText = null;
+      if (category.questionSetId && category.result !== null) {
+        const qs = questionSets.find(s => s.id === category.questionSetId);
+        if (qs && qs.questions[category.result - 1]) {
+           questionText = qs.questions[category.result - 1];
+        }
+      }
 
       if (category.isRolling) {
         const safeMin = Math.min(category.min, category.max);
@@ -254,7 +609,7 @@
           trackHTML += `<div class="w-32 h-full flex items-center justify-center text-4xl font-bold text-slate-300 opacity-80 shrink-0">${getRandomInt(safeMin, safeMax)}</div>`;
         }
         // The actual winning number
-        trackHTML += `<div class="w-32 h-full flex items-center justify-center text-[4rem] font-black text-[#0f172a] shrink-0">${category.result}</div>`;
+        trackHTML += `<div class="w-32 h-full flex items-center justify-center text-[3.5rem] font-black text-[#0f172a] shrink-0">${category.result}</div>`;
 
         resultArea.innerHTML = `
           <div class="relative w-full h-full overflow-hidden rounded-[20px] bg-white shadow-[inset_0_2px_10px_rgba(0,0,0,0.06)] border border-slate-100/50" style="-webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent); mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);">
@@ -276,19 +631,41 @@
           });
         });
       } else if (category.result !== null) {
-        resultArea.innerHTML = `
-      <div class="text-center flex flex-col justify-center w-full h-full">
-        <div class="flex flex-col items-center justify-center shrink-0 animate-spring-in">
-           <div class="text-[10px] font-bold text-[#0000dc] mb-1 uppercase tracking-widest shrink-0">Vylosováno</div>
-           <div class="text-[4rem] leading-none font-black text-[#0f172a] font-sans tracking-tight shrink-0">
+        if (questionText) {
+          resultArea.innerHTML = `
+      <div class="flex flex-row items-center w-full h-full p-2 gap-4 animate-spring-in">
+        <div class="flex flex-col items-center justify-center shrink-0 min-w-[70px]">
+           <div class="text-[9px] font-bold text-[#0000dc] mb-1 uppercase tracking-widest text-center">Vylosováno</div>
+           <div class="text-[3.25rem] leading-none font-black text-[#0f172a] font-sans tracking-tight mb-2">
               ${category.result}
            </div>
-           <button class="btn-draw-single mt-1 text-[11px] font-semibold text-slate-500 hover:text-[#0000dc] transition-all flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-[#0000dc]/30 rounded-full px-2 py-1 shrink-0">
+           <button class="btn-draw-single text-[10px] font-semibold text-slate-500 hover:text-[#0000dc] transition-all flex items-center justify-center gap-1 focus:outline-none focus:ring-2 focus:ring-[#0000dc]/30 rounded-full px-2 py-1 w-full">
+              <i data-lucide="rotate-ccw" class="w-3 h-3 stroke-[2.5]"></i> Znovu
+           </button>
+        </div>
+        <div class="h-[80%] w-px bg-slate-200/80 shrink-0"></div>
+        <div class="flex-1 flex items-center justify-start h-full min-w-0 pr-2">
+           <div class="text-sm font-medium text-slate-700 text-left line-clamp-4 leading-relaxed break-words">
+              ${questionText}
+           </div>
+        </div>
+      </div>
+    `;
+        } else {
+          resultArea.innerHTML = `
+      <div class="text-center flex flex-col justify-center w-full h-full p-1.5">
+        <div class="flex flex-col items-center justify-center shrink-0 animate-spring-in h-full">
+           <div class="text-[10px] font-bold text-[#0000dc] mb-1 uppercase tracking-widest shrink-0">Vylosováno</div>
+           <div class="text-[3.5rem] leading-none font-black text-[#0f172a] font-sans tracking-tight shrink-0 mb-1">
+              ${category.result}
+           </div>
+           <button class="btn-draw-single mt-auto text-[11px] font-semibold text-slate-500 hover:text-[#0000dc] transition-all flex items-center gap-1.5 focus:outline-none focus:ring-2 focus:ring-[#0000dc]/30 rounded-full px-2 py-1 shrink-0">
               <i data-lucide="rotate-ccw" class="w-3 h-3 stroke-[2.5]"></i> Znovu
            </button>
         </div>
       </div>
     `;
+        }
         lucide.createIcons({ root: resultArea });
         resultArea.querySelector('.btn-draw-single').addEventListener('click', () => drawSingle(category.id));
       } else {
@@ -301,8 +678,14 @@
     }
 
     function renderAll() {
+      setsContainer.innerHTML = '';
+      if (sets.length > 1) {
+        setsContainer.appendChild(renderSetsCard());
+      }
+
       categoriesContainer.innerHTML = '';
-      categories.forEach(category => {
+      const activeSet = getActiveSet();
+      activeSet.categories.forEach(category => {
         const card = renderCategoryCard(category);
         categoriesContainer.appendChild(card);
         updateResultArea(category, card);
@@ -311,7 +694,8 @@
     }
 
     function updateCategoryUI(id) {
-      const category = categories.find(c => c.id === id);
+      const activeSet = getActiveSet();
+      const category = activeSet.categories.find(c => c.id === id);
       const card = document.getElementById(`cat-${id}`);
       if (category && card) {
         updateResultArea(category, card);
@@ -319,13 +703,15 @@
     }
 
     function updateActionButtons() {
+      const activeSet = getActiveSet();
+      const categories = activeSet.categories;
+      const isRollingAll = activeSet.isRollingAll;
       const isAnyNotRollingAndNoResults = categories.every(c => c.result === null) && categories.length > 0;
 
       if (isRollingAll) {
         btnDrawAll.className = "w-full flex-1 relative overflow-hidden group flex flex-col items-center justify-center gap-3 p-6 rounded-[32px] text-xl font-bold text-white transition-all transform bg-slate-300 cursor-not-allowed shadow-none";
         btnDrawAll.disabled = true;
 
-        // REMOVED: text-[#0000dc] and text-slate-500 so it goes back to crisp white
         btnDrawAll.innerHTML = `
       <div class="animate-dice-shake mb-2"><i data-lucide="dices" class="w-11 h-11"></i></div>
       <span class="tracking-wide text-2xl">Losuji...</span>
@@ -369,32 +755,41 @@
     }
 
     function addCategory() {
+      const activeSet = getActiveSet();
       const newCat = {
         id: crypto.randomUUID(),
-        name: `Okruh ${categories.length + 1}`,
+        name: `Okruh ${activeSet.categories.length + 1}`,
         min: 1,
         max: 20,
         result: null,
         isRolling: false,
       };
-      categories.push(newCat);
+      activeSet.categories.push(newCat);
       saveState();
       const card = renderCategoryCard(newCat);
       categoriesContainer.appendChild(card);
       updateResultArea(newCat, card);
       updateActionButtons();
+
+      if (sets.length > 1) {
+        renderAll();
+      }
     }
 
     function removeCategory(id) {
+      const activeSet = getActiveSet();
       const card = document.getElementById(`cat-${id}`);
       if (card) {
         card.classList.add('animate-pop-out');
         setTimeout(() => {
-          categories = categories.filter(c => c.id !== id);
+          activeSet.categories = activeSet.categories.filter(c => c.id !== id);
           saveState();
           card.remove();
           updateActionButtons();
-        }, 200); // match animation duration
+          if (sets.length > 1) {
+            renderAll();
+          }
+        }, 200);
       }
     }
 
@@ -405,20 +800,19 @@
     }
 
     async function handleDraw() {
-      if (categories.length === 0) return;
+      const activeSet = getActiveSet();
+      if (activeSet.categories.length === 0) return;
 
-      isRollingAll = true;
+      activeSet.isRollingAll = true;
       updateActionButtons();
 
-      const promises = categories.map(async (c, index) => {
+      const promises = activeSet.categories.map(async (c, index) => {
         const safeMin = Math.min(c.min, c.max);
         const safeMax = Math.max(c.min, c.max);
         c.result = getRandomInt(safeMin, safeMax);
         c.isRolling = true;
 
-        // Sequentially stop each card 0.8 seconds after the previous one
         c.rollDuration = 2 + (index * 0.8);
-        // Add roughly 6 more items per 0.8 seconds of extra spin so the speed remains similar
         c.rollItemsCount = 15 + (index * 6);
 
         updateCategoryUI(c.id);
@@ -434,38 +828,38 @@
 
       await Promise.all(promises);
 
-      isRollingAll = false;
+      activeSet.isRollingAll = false;
       updateActionButtons();
     }
 
     async function drawSingle(id) {
-      const c = categories.find(cat => cat.id === id);
+      const activeSet = getActiveSet();
+      const c = activeSet.categories.find(cat => cat.id === id);
       if (!c) return;
 
       const safeMin = Math.min(c.min, c.max);
       const safeMax = Math.max(c.min, c.max);
 
-      // Calculate the target FIRST so the carousel knows where to stop
       c.result = getRandomInt(safeMin, safeMax);
       c.isRolling = true;
       c.rollDuration = 2;
       c.rollItemsCount = 15;
-      updateCategoryUI(id); // Triggers the sliding animation
+      updateCategoryUI(id);
 
-      // Wait exactly as long as the CSS transition takes
       await new Promise(r => setTimeout(r, c.rollDuration * 1000));
 
       c.isRolling = false;
       c.rollDuration = undefined;
       c.rollItemsCount = undefined;
-      updateCategoryUI(id); // Snaps to the clean, final static state
+      updateCategoryUI(id);
       saveState();
       updateActionButtons();
     }
 
     function handleReset() {
-      if (isRollingAll) return;
-      categories.forEach(c => {
+      const activeSet = getActiveSet();
+      if (activeSet.isRollingAll) return;
+      activeSet.categories.forEach(c => {
         c.result = null;
         c.isRolling = false;
         updateCategoryUI(c.id);
@@ -474,6 +868,216 @@
       updateActionButtons();
     }
 
+    function addSet() {
+      const newSet = {
+        id: crypto.randomUUID(),
+        name: `List ${sets.length + 1}`,
+        categories: [{ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false }],
+        isRollingAll: false
+      };
+      sets.push(newSet);
+      activeSetId = newSet.id;
+      saveState();
+      renderAll();
+      settingsDropdown.classList.add('hidden');
+    }
+
+    btnSettings.addEventListener('click', (e) => {
+      e.stopPropagation();
+      settingsDropdown.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!settingsDropdown.contains(e.target) && !btnSettings.contains(e.target)) {
+        settingsDropdown.classList.add('hidden');
+      }
+      
+      if (!e.target.closest('.btn-assign') && !e.target.closest('.assign-dropdown')) {
+        document.querySelectorAll('.assign-dropdown').forEach(d => d.classList.add('hidden'));
+      }
+    });
+
+    const btnManageQuestions = document.getElementById('btn-manage-questions');
+    const modalQM = document.getElementById('question-manager-modal');
+    const btnCloseQM = document.getElementById('btn-close-qm');
+    const btnQmAddSet = document.getElementById('btn-qm-add-set');
+    const qmSetsList = document.getElementById('qm-sets-list');
+    const qmEditArea = document.getElementById('qm-edit-area');
+    const qmEmptyState = document.getElementById('qm-empty-state');
+    const qmSetName = document.getElementById('qm-set-name');
+    const qmSetQuestions = document.getElementById('qm-set-questions');
+    const qmQCount = document.getElementById('qm-q-count');
+    const btnQmSave = document.getElementById('btn-qm-save');
+    const btnQmDelete = document.getElementById('btn-qm-delete');
+
+    function saveQuestionSets() {
+      localStorage.setItem('stateExamQuestionSets', JSON.stringify(questionSets));
+    }
+
+    function renderQmSetsList() {
+      qmSetsList.innerHTML = '';
+      questionSets.forEach(qs => {
+        const btn = document.createElement('button');
+        const isActive = qmEditingId === qs.id;
+        btn.className = 'w-full text-left px-3 py-2 text-sm font-medium transition-colors rounded-xl flex justify-between items-center mb-1 ' + (isActive ? 'bg-indigo-50 text-[#0000dc]' : 'text-slate-700 hover:bg-slate-50');
+        btn.innerHTML = '<span class="truncate pr-2">' + qs.name + '</span> <span class="text-[10px] font-bold ' + (isActive ? 'bg-[#0000dc]/10' : 'bg-slate-100 text-slate-400') + ' px-1.5 py-0.5 rounded shrink-0">' + qs.questions.length + '</span>';
+        btn.onclick = () => openQmEdit(qs.id);
+        qmSetsList.appendChild(btn);
+      });
+    }
+
+    function parseQuestions(text) {
+      const lines = text.split(/\r?\n/).map(l => l.trim());
+      const questions = [];
+      const hasNumbers = lines.some(l => /^\d+[\.\)]\s+/.test(l));
+      
+      if (hasNumbers) {
+        let currentQ = [];
+        for (const line of lines) {
+          if (line.length === 0) continue;
+          const match = line.match(/^\d+[\.\)]\s+(.*)/);
+          if (match) {
+            if (currentQ.length > 0) questions.push(currentQ.join('\n'));
+            currentQ = [match[1]];
+          } else {
+            if (currentQ.length > 0) {
+              currentQ.push(line);
+            } else {
+              currentQ = [line];
+            }
+          }
+        }
+        if (currentQ.length > 0) questions.push(currentQ.join('\n'));
+      } else {
+        for (const line of lines) {
+          if (line.length > 0) questions.push(line);
+        }
+      }
+      return questions;
+    }
+
+    function formatQuestions(questions) {
+      return questions.map((q, i) => `${i + 1}. ${q}`).join('\n');
+    }
+
+    function openQmEdit(id) {
+      qmEditingId = id;
+      renderQmSetsList();
+      qmEmptyState.classList.add('hidden');
+      qmEditArea.classList.remove('hidden');
+      
+      const qs = questionSets.find(s => s.id === id);
+      qmSetName.value = qs.name;
+      qmSetQuestions.value = formatQuestions(qs.questions);
+      qmQCount.textContent = 'Otázek: ' + qs.questions.length;
+      btnQmDelete.classList.remove('hidden');
+    }
+
+    btnManageQuestions.addEventListener('click', (e) => {
+      e.stopPropagation();
+      settingsDropdown.classList.add('hidden');
+      qmEditingId = null;
+      renderQmSetsList();
+      qmEmptyState.classList.remove('hidden');
+      qmEditArea.classList.add('hidden');
+      modalQM.classList.remove('hidden');
+    });
+
+    btnCloseQM.addEventListener('click', () => {
+      modalQM.classList.add('hidden');
+      // If we modified a set that was assigned to a category, we should update those categories limits
+      let modified = false;
+      sets.forEach(set => {
+         set.categories.forEach(c => {
+            if (c.questionSetId) {
+               const qs = questionSets.find(s => s.id === c.questionSetId);
+               if (qs) {
+                  if (c.max !== qs.questions.length || c.name !== qs.name) {
+                     c.max = qs.questions.length;
+                     c.name = qs.name;
+                     modified = true;
+                  }
+               } else {
+                  c.questionSetId = null;
+                  modified = true;
+               }
+            }
+         });
+      });
+      if (modified) {
+         saveState();
+         renderAll();
+      }
+    });
+
+    btnQmAddSet.addEventListener('click', () => {
+      const newQs = {
+        id: crypto.randomUUID(),
+        name: 'List otázek ' + (questionSets.length + 1),
+        questions: []
+      };
+      questionSets.push(newQs);
+      saveQuestionSets();
+      openQmEdit(newQs.id);
+    });
+
+    qmSetQuestions.addEventListener('input', () => {
+      const questions = parseQuestions(qmSetQuestions.value);
+      qmQCount.textContent = 'Otázek: ' + questions.length;
+    });
+
+    qmSetQuestions.addEventListener('change', () => {
+      const questions = parseQuestions(qmSetQuestions.value);
+      qmSetQuestions.value = formatQuestions(questions);
+    });
+
+    qmSetQuestions.addEventListener('paste', () => {
+      setTimeout(() => {
+        const questions = parseQuestions(qmSetQuestions.value);
+        qmSetQuestions.value = formatQuestions(questions);
+        qmQCount.textContent = 'Otázek: ' + questions.length;
+      }, 10);
+    });
+
+    btnQmSave.addEventListener('click', () => {
+      if (!qmEditingId) return;
+      const qs = questionSets.find(s => s.id === qmEditingId);
+      if (qs) {
+        qs.name = qmSetName.value.trim() || 'Bezejmenná sada';
+        qs.questions = parseQuestions(qmSetQuestions.value);
+        saveQuestionSets();
+        renderQmSetsList();
+        
+        const originalText = btnQmSave.textContent;
+        btnQmSave.textContent = "Uloženo!";
+        btnQmSave.classList.replace('bg-[#0000dc]', 'bg-emerald-500');
+        btnQmSave.classList.replace('hover:bg-[#0000dc]/90', 'hover:bg-emerald-600');
+        setTimeout(() => {
+          btnQmSave.textContent = originalText;
+          btnQmSave.classList.replace('bg-emerald-500', 'bg-[#0000dc]');
+          btnQmSave.classList.replace('hover:bg-emerald-600', 'hover:bg-[#0000dc]/90');
+        }, 1000);
+      }
+    });
+
+    btnQmDelete.addEventListener('click', () => {
+      if (!qmEditingId) return;
+      if (confirm('Opravdu chcete smazat tuto sadu otázek?')) {
+        questionSets = questionSets.filter(s => s.id !== qmEditingId);
+        saveQuestionSets();
+        qmEditingId = null;
+        renderQmSetsList();
+        qmEmptyState.classList.remove('hidden');
+        qmEditArea.classList.add('hidden');
+      }
+    });
+
+    btnAddSet.addEventListener('click', (e) => {
+      e.stopPropagation();
+      addSet();
+      settingsDropdown.classList.add('hidden');
+    });
+
     btnAddCategory.addEventListener('click', addCategory);
     btnDrawAll.addEventListener('click', handleDraw);
     btnResetAll.addEventListener('click', handleReset);
@@ -481,7 +1085,6 @@
     // Initialize
     renderAll();
     lucide.createIcons();
-
   </script>
 </body>
 
