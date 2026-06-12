@@ -93,7 +93,7 @@ const STATNICOVE_SADY = [
   },
   {
     id: "mgr-klinicka",
-    name: "Mgr. Klinická p.",
+    name: "Mgr. Klinická psychologie",
     questions: [
       "Pojetí normality člověka a zdraví. Kvalita života. Duševní hygiena. Psychosomatický pohled na zdraví a nemoc. Rodinné a systémové souvislosti duševní nemoci. Teorie působení stresu.",
       "Poruchy osobnosti a chování u dospělých: specifické poruchy osobnosti (F 60).",
@@ -120,7 +120,7 @@ const STATNICOVE_SADY = [
   },
   {
     id: "mgr-pedagogicka",
-    name: "Mgr. Pedagogická p.",
+    name: "Mgr. Pedagogická psychologie",
     questions: [
       "Specifika práce s dětmi a dospívajícími v poradenském systému. Průběh vyšetření (vývojové hledisko, úvodní rozhovor, anamnéza, pracovní hypotéza, pracovní postup), zpráva z psychologického vyšetření (rodič, škola), etické aspekty práce s dětmi, dospívajícími a rodinami.",
       "Předškolní období a zahájení školní docházky: propojení anamnézy z cílem vyšetření, opoždění a nerovnoměrnost vývoje. Nástup do školy, školní zralost a její diagnostika. Adaptace na školní docházku, možné problémy. Lateralita jako poradenský problém.",
@@ -143,7 +143,7 @@ const STATNICOVE_SADY = [
   },
   {
     id: "mgr-pracovni",
-    name: "Mgr. Pracovní p.",
+    name: "Mgr. Pracovní psychologie",
     questions: [
       "Dobrý pracovní výkon",
       "Adaptační proces",
