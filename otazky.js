@@ -27,7 +27,7 @@ const STATNICOVE_SADY = [
       "Ekologický model vývoje",
       "Dědičnost versus prostředí",
       "Prenatální vývoj a novorozenecké období",
-      "Kojenecké obdobé",
+      "Kojenecké období",
       "Batolecí období",
       "Předškolní věk",
       "Mladší školní věk",
