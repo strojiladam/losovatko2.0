@@ -23,7 +23,7 @@ const STATNICOVE_SADY = [
     name: "Bc. Vývojová psychologie",
     questions: [
       "Teorie a modely",
-      "Modely",
+      "Darwinismus, etologie a současné biologizující pohledy",
       "Ekologický model vývoje",
       "Dědičnost versus prostředí",
       "Prenatální vývoj a novorozenecké období",
@@ -40,17 +40,19 @@ const STATNICOVE_SADY = [
     id: "bc-socialni",
     name: "Bc. Sociální psychologie",
     questions: [
-      "Vymezení",
-      "Vztah k sobě",
+      "Vymezení a historie sociální psychologie (SP)",
+      "Sebereflexe (self)",
       "Sociální kognice",
       "Atribuční procesy",
-      "Identita",
-      "Postoje",
+      "Identita v SP",
+      "Spravedlnost v SP",
+      "Postoj v SP",
       "Sociální vlivy",
-      "Vztahy",
-      "Malá sociální skupina",
-      "Velká sociální skupina",
-      "Komunikace"
+      "Stereotypy, předsudky a diskriminace",
+      "Blízké vztahy",
+      "Agrese",
+      "Prosociální chování",
+      "Malá sociální skupina"
     ]
   },
   {
