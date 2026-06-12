@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+    <!-- App Icon Background (True Blue) -->
+    <rect width="512" height="512" rx="128" fill="#0000dc" />
+    
+    <!-- Dice Outline -->
+    <rect width="320" height="320" x="96" y="96" rx="64" fill="none" stroke="#ffffff" stroke-width="36" />
+    
+    <!-- Dice Dots (Number 3) -->
+    <circle cx="184" cy="184" r="32" fill="#ffffff" />
+    <circle cx="256" cy="256" r="32" fill="#ffffff" />
+    <circle cx="328" cy="328" r="32" fill="#ffffff" />
+</svg>
