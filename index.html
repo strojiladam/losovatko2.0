@@ -5,7 +5,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Losovátko otázek</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
@@ -62,9 +61,17 @@
     }
 
     @keyframes tumble {
-      0% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(180deg); }
-      100% { transform: translateY(0px) rotate(360deg); }
+      0% {
+        transform: translateY(0px) rotate(0deg);
+      }
+
+      50% {
+        transform: translateY(-20px) rotate(180deg);
+      }
+
+      100% {
+        transform: translateY(0px) rotate(360deg);
+      }
     }
 
     .anim-tumble {
@@ -297,7 +304,7 @@
           initialCategories = JSON.parse(savedCats);
         }
         if (initialCategories.length === 0) {
-          initialCategories.push({ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false });
+          initialCategories.push({ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false, noRepeat: false, drawnNumbers: [] });
         }
 
         sets.push({
@@ -318,7 +325,7 @@
       sets = [{
         id: crypto.randomUUID(),
         name: 'Sestava 1',
-        categories: [{ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false }],
+        categories: [{ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false, noRepeat: false, drawnNumbers: [] }],
         isRollingAll: false
       }];
       activeSetId = sets[0].id;
@@ -474,8 +481,12 @@
       <div class="flex justify-between items-center text-slate-500 px-1 pt-0 relative">
           <label class="text-xs font-bold uppercase tracking-wider">Okruh</label>
           <div class="flex gap-1 items-center">
-            <button class="btn-assign p-1 text-slate-400 hover:text-[#0000dc] hover:bg-indigo-50 rounded-full transition-colors" title="Přiřadit sadu otázek">
-              <i data-lucide="database" class="w-4 h-4"></i>
+            <button class="btn-norepeat h-[26px] rounded-full transition-all duration-300 flex items-center justify-start gap-1.5 box-border overflow-hidden ${category.noRepeat ? 'w-[100px] px-2 text-orange-500 bg-transparent hover:bg-orange-50' : 'w-[26px] px-[5px] text-slate-400 hover:text-orange-500 hover:bg-orange-50'}" title="${category.noRepeat ? 'Losovat bez opakování zapnuto' : 'Losovat bez opakování vypnuto'}">
+              <i data-lucide="${category.noRepeat ? 'repeat-off' : 'repeat'}" class="w-4 h-4 shrink-0"></i>
+              <span class="text-xs font-bold whitespace-nowrap transition-opacity duration-300 ${category.noRepeat ? 'opacity-100' : 'opacity-0'}">Zbývá ${getRemainingCount(category)}</span>
+            </button>
+            <button class="btn-assign p-1 ${category.questionSetId ? 'text-[#0000dc]' : 'text-slate-400 hover:text-[#0000dc]'} hover:bg-indigo-50 rounded-full transition-colors" title="${category.questionSetId ? 'Změnit / odpojit sadu' : 'Přiřadit sadu otázek'}">
+              <i data-lucide="${category.questionSetId ? 'link' : 'database'}" class="w-4 h-4"></i>
             </button>
             <button class="btn-delete p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors" title="Smazat okruh">
               <i data-lucide="trash-2" class="w-4 h-4"></i>
@@ -509,6 +520,29 @@
   `;
 
       // Attach events
+      div.querySelector('.btn-norepeat').addEventListener('click', (e) => {
+        const btn = e.currentTarget;
+        category.noRepeat = !category.noRepeat;
+        if (category.noRepeat) {
+          category.drawnNumbers = [];
+          const safeMin = Math.min(category.min, category.max);
+          const safeMax = Math.max(category.min, category.max);
+          if (category.result !== null && category.result >= safeMin && category.result <= safeMax) {
+            category.drawnNumbers.push(category.result);
+          }
+          btn.className = 'btn-norepeat h-[26px] rounded-full transition-all duration-300 flex items-center justify-start gap-1.5 box-border overflow-hidden w-[100px] px-2 text-orange-500 bg-transparent hover:bg-orange-50';
+          btn.title = 'Losovat bez opakování zapnuto';
+          btn.innerHTML = `<i data-lucide="repeat-off" class="w-4 h-4 shrink-0"></i><span class="text-xs font-bold whitespace-nowrap transition-opacity duration-300 opacity-100">Zbývá ${getRemainingCount(category)}</span>`;
+        } else {
+          category.drawnNumbers = [];
+          btn.className = 'btn-norepeat h-[26px] rounded-full transition-all duration-300 flex items-center justify-start gap-1.5 box-border overflow-hidden w-[26px] px-[5px] text-slate-400 hover:text-orange-500 hover:bg-orange-50';
+          btn.title = 'Losovat bez opakování vypnuto';
+          btn.innerHTML = `<i data-lucide="repeat" class="w-4 h-4 shrink-0"></i><span class="text-xs font-bold whitespace-nowrap transition-opacity duration-300 opacity-0">Zbývá ${getRemainingCount(category)}</span>`;
+        }
+        lucide.createIcons({ root: btn });
+        saveState();
+      });
+
       div.querySelector('.btn-delete').addEventListener('click', () => removeCategory(category.id));
 
       const nameInput = div.querySelector('.cat-name');
@@ -521,12 +555,14 @@
       minInput.addEventListener('input', (e) => {
         category.min = parseInt(e.target.value) || 0;
         saveState();
+        updateRemainingCountUI(category, div);
       });
 
       const maxInput = div.querySelector('.cat-max');
       maxInput.addEventListener('input', (e) => {
         category.max = parseInt(e.target.value) || 0;
         saveState();
+        updateRemainingCountUI(category, div);
       });
 
       const assignDropdown = div.querySelector('.assign-dropdown');
@@ -540,6 +576,23 @@
         if (questionSets.length === 0) {
           assignDropdown.innerHTML += `<div class="px-2 py-2 text-xs text-slate-500 text-center">Žádné sady. Vytvořte v nastavení.</div>`;
         } else {
+          if (category.questionSetId) {
+            const unassignBtn = document.createElement('button');
+            unassignBtn.className = "w-full text-left px-3 py-2 text-xs font-bold text-red-500 hover:bg-red-50 transition-colors rounded-lg mb-1 border-b border-slate-100 pb-2 pt-1.5 flex items-center justify-center gap-1";
+            unassignBtn.innerHTML = `<i data-lucide="unlink" class="w-3 h-3"></i> Zrušit propojení`;
+            unassignBtn.onclick = (ev) => {
+              ev.stopPropagation();
+              category.questionSetId = null;
+              saveState();
+              const oldCard = document.getElementById(`cat-${category.id}`);
+              const newCard = renderCategoryCard(category);
+              if (oldCard) oldCard.replaceWith(newCard);
+              updateResultArea(category, newCard);
+              updateActionButtons();
+            };
+            assignDropdown.appendChild(unassignBtn);
+          }
+
           questionSets.forEach(qs => {
             const btn = document.createElement('button');
             btn.className = `w-full text-left px-3 py-2 text-sm font-medium ${category.questionSetId === qs.id ? 'bg-indigo-50 text-[#0000dc]' : 'text-slate-700 hover:bg-slate-50'} transition-colors rounded-lg flex justify-between items-center mb-0.5`;
@@ -555,23 +608,14 @@
                 category.max = qs.questions.length;
               }
               saveState();
-              renderAll();
+              const oldCard = document.getElementById(`cat-${category.id}`);
+              const newCard = renderCategoryCard(category);
+              if (oldCard) oldCard.replaceWith(newCard);
+              updateResultArea(category, newCard);
+              updateActionButtons();
             };
             assignDropdown.appendChild(btn);
           });
-
-          if (category.questionSetId) {
-            const unassignBtn = document.createElement('button');
-            unassignBtn.className = "w-full text-left px-3 py-2 text-xs font-bold text-red-500 hover:bg-red-50 transition-colors rounded-lg mt-1 border-t border-slate-100 pt-2 pb-1.5 flex items-center justify-center gap-1";
-            unassignBtn.innerHTML = `<i data-lucide="unlink" class="w-3 h-3"></i> Zrušit propojení`;
-            unassignBtn.onclick = (ev) => {
-              ev.stopPropagation();
-              category.questionSetId = null;
-              saveState();
-              renderAll();
-            };
-            assignDropdown.appendChild(unassignBtn);
-          }
         }
         assignDropdown.classList.toggle('hidden');
         lucide.createIcons({ root: assignDropdown });
@@ -609,8 +653,10 @@
         trackHTML += `<div class="w-32 h-full flex items-center justify-center text-[3.5rem] font-black text-[#0f172a] shrink-0">${category.result}</div>`;
 
         resultArea.innerHTML = `
-          <div class="relative w-full h-full overflow-hidden rounded-[20px] bg-white shadow-[inset_0_2px_10px_rgba(0,0,0,0.06)] border border-slate-100/50" style="-webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent); mask-image: linear-gradient(to right, transparent, black 20%, black 80%, transparent);">
-             <div class="absolute h-full flex flex-row" id="track-${category.id}" style="left: 50%; transform: translateX(-64px); transition: transform ${duration}s ease-out;">
+          <div class="relative w-full h-full overflow-hidden rounded-[20px] bg-white shadow-[inset_0_2px_10px_rgba(0,0,0,0.06)] border border-slate-100/50">
+             <div class="absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white to-transparent pointer-events-none z-10"></div>
+             <div class="absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white to-transparent pointer-events-none z-10"></div>
+             <div class="absolute h-full flex flex-row" id="track-${category.id}" style="left: 50%; transform: translate3d(-64px, 0, 0); transition: transform ${duration}s ease-out; will-change: transform;">
                 ${trackHTML}
              </div>
           </div>
@@ -623,7 +669,7 @@
             if (track) {
               // 128px is the width of the 'w-32' class. Move it left by all items minus the first one.
               const distance = (itemsCount - 1) * 128;
-              track.style.transform = `translateX(calc(-64px - ${distance}px))`;
+              track.style.transform = `translate3d(calc(-64px - ${distance}px), 0, 0)`;
             }
           });
         });
@@ -762,6 +808,8 @@
         max: 20,
         result: null,
         isRolling: false,
+        noRepeat: false,
+        drawnNumbers: []
       };
       activeSet.categories.push(newCat);
       saveState();
@@ -792,6 +840,44 @@
       }
     }
 
+    function getRemainingCount(category) {
+      const safeMin = Math.min(category.min, category.max);
+      const safeMax = Math.max(category.min, category.max);
+      const total = safeMax - safeMin + 1;
+      const drawn = category.drawnNumbers ? category.drawnNumbers.filter(n => n >= safeMin && n <= safeMax).length : 0;
+      return Math.max(0, total - drawn);
+    }
+
+    function updateRemainingCountUI(category, cardEl) {
+      if (category.noRepeat) {
+        const span = cardEl.querySelector('.btn-norepeat span');
+        if (span) {
+          span.textContent = `Zbývá ${getRemainingCount(category)}`;
+        }
+      }
+    }
+
+    function drawNumberForCategory(c) {
+      const safeMin = Math.min(c.min, c.max);
+      const safeMax = Math.max(c.min, c.max);
+
+      if (c.noRepeat) {
+        if (!c.drawnNumbers) c.drawnNumbers = [];
+        c.drawnNumbers = c.drawnNumbers.filter(n => n >= safeMin && n <= safeMax);
+        if (c.drawnNumbers.length >= (safeMax - safeMin + 1)) {
+          return null;
+        }
+        let available = [];
+        for (let i = safeMin; i <= safeMax; i++) {
+          if (!c.drawnNumbers.includes(i)) available.push(i);
+        }
+        const res = available[Math.floor(Math.random() * available.length)];
+        c.drawnNumbers.push(res);
+        return res;
+      }
+      return getRandomInt(safeMin, safeMax);
+    }
+
     function getRandomInt(min, max) {
       min = Math.ceil(min);
       max = Math.floor(max);
@@ -817,14 +903,17 @@
       updateActionButtons();
 
       const promises = activeSet.categories.map(async (c, index) => {
-        const safeMin = Math.min(c.min, c.max);
-        const safeMax = Math.max(c.min, c.max);
-        c.result = getRandomInt(safeMin, safeMax);
+        const newResult = drawNumberForCategory(c);
+        if (newResult === null) return;
+
+        c.result = newResult;
         c.isRolling = true;
 
         c.rollItemsCount = 15 + (index * 6);
 
         updateCategoryUI(c.id);
+        const cardEl = document.getElementById(`cat-${c.id}`);
+        if (cardEl) updateRemainingCountUI(c, cardEl);
 
         await new Promise(r => setTimeout(r, c.rollDuration * 1000));
 
@@ -849,14 +938,17 @@
       const c = activeSet.categories.find(cat => cat.id === id);
       if (!c) return;
 
-      const safeMin = Math.min(c.min, c.max);
-      const safeMax = Math.max(c.min, c.max);
+      const newResult = drawNumberForCategory(c);
+      if (newResult === null) return;
 
-      c.result = getRandomInt(safeMin, safeMax);
+      c.result = newResult;
       c.isRolling = true;
       c.rollDuration = 2;
       c.rollItemsCount = 15;
       updateCategoryUI(id);
+
+      const cardEl = document.getElementById(`cat-${id}`);
+      if (cardEl) updateRemainingCountUI(c, cardEl);
 
       await new Promise(r => setTimeout(r, c.rollDuration * 1000));
 
@@ -874,7 +966,10 @@
       activeSet.categories.forEach(c => {
         c.result = null;
         c.isRolling = false;
+        c.drawnNumbers = [];
         updateCategoryUI(c.id);
+        const cardEl = document.getElementById(`cat-${c.id}`);
+        if (cardEl) updateRemainingCountUI(c, cardEl);
       });
       saveState();
       updateActionButtons();
@@ -884,7 +979,7 @@
       const newSet = {
         id: crypto.randomUUID(),
         name: `Sestava ${sets.length + 1}`,
-        categories: [{ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false }],
+        categories: [{ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false, noRepeat: false, drawnNumbers: [] }],
         isRollingAll: false
       };
       sets.push(newSet);
