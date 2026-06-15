@@ -38,19 +38,17 @@
       text: `Základními stavebními prvky jsou <strong>Okruhy</strong> – jednotlivé losovací karty, u kterých si můžete nastavit číselné rozmezí (např. 1–20) a pojmenovat si je podle potřeby. Okruhy můžete také libovolně <span class="whitespace-nowrap">přidávat (<i data-lucide="plus" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>)</span> nebo <span class="whitespace-nowrap">mazat (<i data-lucide="trash-2" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>).</span>`,
       visual: `
         <div class="w-full h-40 bg-slate-50 rounded-2xl border border-slate-200 flex items-stretch justify-center p-5 gap-3">
-          <div class="flex-1 bg-white rounded-xl border border-slate-200 shadow-sm p-4 relative overflow-hidden flex flex-col justify-between max-w-[220px]">
-            <div class="flex justify-between items-start">
-              <div>
-                <div class="text-[10px] font-bold text-slate-400 uppercase">Okruh</div>
-                <div class="h-8 mt-2 w-28 bg-slate-50 border border-slate-100 rounded-lg text-xs font-medium flex items-center px-2.5 text-slate-800">Statka 1</div>
-              </div>
-              <div class="w-8 h-8 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-red-500">
-                <i data-lucide="trash-2" class="w-4 h-4"></i>
+          <div class="flex-1 bg-white rounded-xl border border-slate-200 shadow-sm p-3 relative overflow-hidden max-w-[220px]">
+            <div class="flex justify-between items-center">
+              <div class="text-[8px] font-bold text-slate-400 uppercase">Okruh</div>
+              <div class="p-1 bg-red-50 text-red-500 rounded-full">
+                <i data-lucide="trash-2" class="w-3 h-3"></i>
               </div>
             </div>
-            <div class="flex gap-2">
-              <div class="h-6 flex-[2] bg-slate-50 border border-slate-100 rounded-lg"></div>
-              <div class="h-6 flex-[3] bg-indigo-50 border border-indigo-100 rounded-lg"></div>
+            <div class="h-6 mt-2 w-full bg-slate-50 border border-slate-100 rounded text-xs flex items-center px-2 text-slate-800">Indivindi</div>
+            <div class="flex gap-2 mt-2">
+              <div class="h-5 flex-1 bg-slate-50 border border-slate-100 rounded"></div>
+              <div class="h-5 flex-1 bg-slate-50 border border-slate-100 rounded"></div>
             </div>
           </div>
           <div class="w-14 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400 bg-transparent">
@@ -60,7 +58,7 @@
     },
     {
       title: "Sestavy okruhů",
-      text: `Pro lepší pořádek a vyšší efektivitu si můžete okruhy sdružovat do <strong>Sestav</strong> – například pro různé specializace studentů nebo komise. Novou sestavu přidáte přes tlačítko <span class="whitespace-nowrap"><strong>ozubeného kola</strong> <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>.</span> Mezi sestavami následně přepínáte v <span class="whitespace-nowrap"><strong>panelu sestav</strong> <i data-lucide="folders" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i></span> v horní části. <strong>Dvojklikem</strong> na název sestavy ji přejmenujete.`,
+      text: `Pro lepší pořádek a vyšší efektivitu si můžete okruhy sdružovat do <strong>Sestav</strong> – například pro různé specializace studentů nebo komise. Novou sestavu přidáte přes tlačítko <span class="whitespace-nowrap"><strong>nastavení</strong> <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>.</span> Mezi sestavami následně přepínáte v <strong>panelu</strong> <span class="whitespace-nowrap"><strong>sestav</strong> <i data-lucide="folders" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i></span> v horní části. <strong>Dvojklikem</strong> na název sestavy ji přejmenujete.`,
       visual: `
         <div class="w-full h-40 bg-slate-50 rounded-2xl border border-slate-200 p-4 flex gap-3">
           <div class="w-1/3 bg-white rounded-xl border border-slate-200 p-2 shadow-sm flex flex-col gap-2">
@@ -80,7 +78,7 @@
     },
     {
       title: "Různé režimy losování",
-      text: `U každého okruhu najdete ikonu <span class="whitespace-nowrap">šipek <i data-lucide="repeat" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>.</span> Pokud na ni kliknete, zapnete režim <span class="whitespace-nowrap"><strong>Losovat bez opakování</strong> <i data-lucide="repeat-off" class="w-4 h-4 inline text-orange-500 align-sub mx-0.5"></i>.</span> Aplikace si začne pamatovat již tažená čísla a zajistí, že se žádné z nich nebude při dalším losování opakovat. Zároveň uvidíte, kolik otázek ještě zbývá k tažení.`,
+      text: `U každého okruhu najdete ikonu <span class="whitespace-nowrap">šipek <i data-lucide="repeat" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>.</span> Pokud na ni kliknete, zapnete režim <strong>Losovat bez</strong> <span class="whitespace-nowrap"><strong>opakování</strong> <i data-lucide="repeat-off" class="w-4 h-4 inline text-orange-500 align-sub mx-0.5"></i>.</span> Aplikace si začne pamatovat již tažená čísla a zajistí, že se žádné z nich nebude při dalším losování opakovat. Zároveň uvidíte, kolik otázek ještě zbývá k tažení.`,
       visual: `
         <div class="w-full h-32 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
           <div class="flex items-center justify-between w-full px-8">
@@ -100,31 +98,37 @@
         <div class="w-full h-36 bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col gap-3 relative">
           <div class="flex justify-between items-center">
             <div class="text-[10px] font-bold text-slate-400 uppercase">Okruh</div>
-            <div class="p-1 bg-indigo-50 text-[#0000dc] rounded-full"><i data-lucide="link" class="w-4 h-4"></i></div>
+            <div class="flex items-center gap-1.5">
+              <div class="p-1 bg-slate-100 text-slate-400 rounded-full"><i data-lucide="layers" class="w-4 h-4"></i></div>
+              <i data-lucide="arrow-right" class="w-4 h-4 text-slate-300"></i>
+              <div class="p-1 bg-indigo-50 text-[#0000dc] rounded-full"><i data-lucide="link" class="w-4 h-4"></i></div>
+            </div>
           </div>
           <div class="relative">
             <div class="w-full h-8 bg-slate-100 border border-slate-100 rounded-xl px-3 flex items-center text-sm text-slate-600 font-medium">Státnice - Klinika</div>
             <i data-lucide="lock" class="absolute right-3 top-2 w-4 h-4 text-slate-400"></i>
           </div>
           <div class="flex-1 bg-slate-50 rounded-xl border border-slate-100 flex items-center px-3 gap-3">
-            <div class="text-2xl font-black text-[#0f172a]">7</div>
+            <div class="text-2xl font-black text-[#0f172a]">8</div>
             <div class="w-px h-8 bg-slate-200"></div>
-            <div class="text-xs font-medium text-slate-600 line-clamp-2">Poruchy duševní a poruchy chování...</div>
+            <div class="text-xs font-medium text-slate-600 line-clamp-2">Poruchy příjmu potravy (F50).</div>
           </div>
         </div>`
     },
     {
       title: "Vytvářejte a upravujte sady otázek",
-      text: `Své vlastní sady otázek můžete spravovat kliknutím na ikonu <span class="whitespace-nowrap"><strong>ozubeného kola</strong> <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i></span> a výběrem možnosti <strong>Správa otázek</strong>. Nové sady vytvoříte tak, že do nich jednoduše zkopírujete seznam otázek z Excelu či Wordu nebo otázky (jejich názvy) napíšete ručně, každou na nový řádek. Stisknutím <strong>Uložit</strong> se vytvořená sada uloží do paměti vašeho prohlížeče.`,
+      text: `Své vlastní sady otázek můžete spravovat kliknutím na tlačítko <span class="whitespace-nowrap"><strong>nastavení</strong> <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i></span> a výběrem možnosti <strong>Správa otázek</strong>. Nové sady vytvoříte tak, že do nich jednoduše zkopírujete seznam otázek z Excelu či Wordu nebo otázky (jejich názvy) napíšete ručně, každou na nový řádek. Stisknutím <strong>Uložit</strong> se vytvořená sada uloží do paměti vašeho prohlížeče.`,
       visual: `
-        <div class="w-full h-40 bg-slate-50 rounded-2xl border border-slate-200 flex items-end justify-center pb-4 relative">
-           <div class="w-48 bg-white border border-slate-100 rounded-2xl shadow-xl p-1.5 relative z-10 mr-12 mb-4">
-             <div class="px-3 py-2 text-sm font-medium text-slate-700 flex items-center gap-2"><i data-lucide="folder-plus" class="w-4 h-4"></i> Přidat sestavu</div>
-             <div class="h-px bg-slate-100 my-1"></div>
-             <div class="px-3 py-2 text-sm font-medium text-[#0000dc] bg-indigo-50 rounded-xl flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4"></i> Správa otázek</div>
-           </div>
-           <div class="w-16 h-16 shrink-0 border border-slate-200 rounded-[20px] text-slate-600 bg-white flex items-center justify-center shadow-md relative z-10">
-             <i data-lucide="settings" class="w-6 h-6"></i>
+        <div class="w-full h-40 bg-slate-50 rounded-2xl border border-slate-200 flex items-end justify-center pb-4 relative px-4">
+           <div class="w-full max-w-[300px] flex items-end justify-between gap-2">
+             <div class="w-48 shrink bg-white border border-slate-100 rounded-2xl shadow-xl p-1.5 relative z-10 mb-4">
+               <div class="px-3 py-2 text-sm font-medium text-slate-700 flex items-center gap-2"><i data-lucide="folder-plus" class="w-4 h-4 shrink-0"></i> Přidat sestavu</div>
+               <div class="h-px bg-slate-100 my-1"></div>
+               <div class="px-3 py-2 text-sm font-medium text-[#0000dc] bg-indigo-50 rounded-xl flex items-center gap-2"><i data-lucide="layers" class="w-4 h-4 shrink-0"></i> Správa otázek</div>
+             </div>
+             <div class="w-16 h-16 shrink-0 border border-slate-200 rounded-[20px] text-slate-600 bg-white flex items-center justify-center shadow-md relative z-10">
+               <i data-lucide="settings" class="w-6 h-6"></i>
+             </div>
            </div>
         </div>`
     }
