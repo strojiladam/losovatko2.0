@@ -93,7 +93,6 @@
       text: `Své vlastní seznamy otázek můžete spravovat kliknutím na ikonu ozubeného kola <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i> a výběrem možnosti <strong>Správa otázek</strong>. Nové sady vytvoříte tak, že do nich jednoduše zkopírujete seznam otázek z Excelu či Wordu nebo otázky (jejich názvy) napíšete ručně, každou na nový řádek.`,
       visual: `
         <div class="w-full h-40 bg-slate-50 rounded-2xl border border-slate-200 flex items-end justify-center pb-4 relative">
-           <div class="absolute inset-0 flex items-center justify-center opacity-10"><i data-lucide="layers" class="w-24 h-24"></i></div>
            <div class="w-48 bg-white border border-slate-100 rounded-2xl shadow-xl p-1.5 relative z-10 mr-12 mb-4">
              <div class="px-3 py-2 text-sm font-medium text-slate-700 flex items-center gap-2"><i data-lucide="folder-plus" class="w-4 h-4"></i> Přidat sestavu</div>
              <div class="h-px bg-slate-100 my-1"></div>
