@@ -27,7 +27,7 @@
   const steps = [
     {
       title: "Vítejte v novém losovátku!",
-      text: "Tento nástroj vám pomůže s losováním zkouškových otázek nebo témat. Vše probíhá lokálně ve vašem prohlížeči – přehledně a s možností plného přizpůsobení. Pojďme si ukázat základní funkce.",
+      text: "Tato aplikace vám pomůže s losováním zkouškových otázek nebo témat. Vše probíhá lokálně ve vašem prohlížeči – přehledně a s možností plného přizpůsobení. Pojďme si ukázat základní funkce.",
       visual: `
         <div class="w-full h-32 bg-indigo-50 rounded-2xl flex items-center justify-center text-[#0000dc]">
           <i data-lucide="dices" class="w-16 h-16 opacity-80"></i>
