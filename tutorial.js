@@ -34,8 +34,33 @@
         </div>`
     },
     {
-      title: "Okruhy a jejich sestavy",
-      text: `Základními stavebními prvky jsou <strong>Okruhy</strong> (jednotlivé losovací karty), u kterých si můžete nastavit číselné rozmezí (od–do). Pro lepší pořádek si můžete okruhy sdružovat do <strong>Sestav</strong> – například pro různé specializace studentů nebo komise. Novou sestavu snadno přidáte přes tlačítko <span class="whitespace-nowrap"><strong>ozubeného kola</strong> <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>.</span> Mezi sestavami následně přepínáte pomocí panelu vlevo nahoře. <strong>Dvojklikem</strong> na název sestavy ji přejmenujete.`,
+      title: "Okruhy",
+      text: `Základními stavebními prvky jsou <strong>Okruhy</strong> – jednotlivé losovací karty, u kterých si můžete nastavit číselné rozmezí (např. 1–20) a pojmenovat si je podle potřeby. Okruhy můžete také libovolně <span class="whitespace-nowrap">přidávat (<i data-lucide="plus" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>)</span> nebo <span class="whitespace-nowrap">mazat (<i data-lucide="trash-2" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>).</span>`,
+      visual: `
+        <div class="w-full h-40 bg-slate-50 rounded-2xl border border-slate-200 flex items-stretch justify-center p-5 gap-3">
+          <div class="flex-1 bg-white rounded-xl border border-slate-200 shadow-sm p-4 relative overflow-hidden flex flex-col justify-between max-w-[220px]">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="text-[10px] font-bold text-slate-400 uppercase">Okruh</div>
+                <div class="h-8 mt-2 w-28 bg-slate-50 border border-slate-100 rounded-lg text-xs font-medium flex items-center px-2.5 text-slate-800">Statka 1</div>
+              </div>
+              <div class="w-8 h-8 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-red-500">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <div class="h-6 flex-[2] bg-slate-50 border border-slate-100 rounded-lg"></div>
+              <div class="h-6 flex-[3] bg-indigo-50 border border-indigo-100 rounded-lg"></div>
+            </div>
+          </div>
+          <div class="w-14 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center text-slate-400 bg-transparent">
+            <i data-lucide="plus" class="w-6 h-6"></i>
+          </div>
+        </div>`
+    },
+    {
+      title: "Sestavy okruhů",
+      text: `Pro lepší pořádek a vyšší efektivitu si můžete okruhy sdružovat do <strong>Sestav</strong> – například pro různé specializace studentů nebo komise. Novou sestavu přidáte přes tlačítko <span class="whitespace-nowrap"><strong>ozubeného kola</strong> <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>.</span> Mezi sestavami následně přepínáte v <span class="whitespace-nowrap"><strong>panelu sestav</strong> <i data-lucide="folders" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i></span> v horní části. <strong>Dvojklikem</strong> na název sestavy ji přejmenujete.`,
       visual: `
         <div class="w-full h-40 bg-slate-50 rounded-2xl border border-slate-200 p-4 flex gap-3">
           <div class="w-1/3 bg-white rounded-xl border border-slate-200 p-2 shadow-sm flex flex-col gap-2">
@@ -90,7 +115,7 @@
     },
     {
       title: "Vytvářejte a upravujte sady otázek",
-      text: `Své vlastní sady otázek můžete spravovat kliknutím na ikonu ozubeného <span class="whitespace-nowrap">kola <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i></span> a výběrem možnosti <strong>Správa otázek</strong>. Nové sady vytvoříte tak, že do nich jednoduše zkopírujete seznam otázek z Excelu či Wordu nebo otázky (jejich názvy) napíšete ručně, každou na nový řádek. Stisknutím <strong>Uložit</strong> se vytvořená sada uloží do paměti vašeho prohlížeče.`,
+      text: `Své vlastní sady otázek můžete spravovat kliknutím na ikonu <span class="whitespace-nowrap"><strong>ozubeného kola</strong> <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i></span> a výběrem možnosti <strong>Správa otázek</strong>. Nové sady vytvoříte tak, že do nich jednoduše zkopírujete seznam otázek z Excelu či Wordu nebo otázky (jejich názvy) napíšete ručně, každou na nový řádek. Stisknutím <strong>Uložit</strong> se vytvořená sada uloží do paměti vašeho prohlížeče.`,
       visual: `
         <div class="w-full h-40 bg-slate-50 rounded-2xl border border-slate-200 flex items-end justify-center pb-4 relative">
            <div class="w-48 bg-white border border-slate-100 rounded-2xl shadow-xl p-1.5 relative z-10 mr-12 mb-4">
