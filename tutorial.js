@@ -27,15 +27,15 @@
   const steps = [
     {
       title: "Vítejte v novém losovátku!",
-      text: "Tento nástroj vám pomůže s losováním zkouškových otázek nebo témat. Vše probíhá lokálně ve vašem prohlížeči – přehledně, plynule a s možností plného přizpůsobení. Pojďme si ukázat základní funkce.",
+      text: "Tento nástroj vám pomůže s losováním zkouškových otázek nebo témat. Vše probíhá lokálně ve vašem prohlížeči – přehledně a s možností plného přizpůsobení. Pojďme si ukázat základní funkce.",
       visual: `
         <div class="w-full h-32 bg-indigo-50 rounded-2xl flex items-center justify-center text-[#0000dc]">
           <i data-lucide="dices" class="w-16 h-16 opacity-80"></i>
         </div>`
     },
     {
-      title: "Rozdělte si práci",
-      text: `Základními stavebními kameny jsou <strong>Okruhy</strong> (jednotlivé losovací karty), u kterých si můžete nastavit číselné rozmezí (od–do). Pro lepší pořádek si můžete okruhy sdružovat do <strong>Sestav</strong> – například pro různé specializace studentů nebo komise. Novou sestavu snadno přidáte přes tlačítko <strong>ozubeného kola</strong> <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>. Mezi sestavami následně přepínáte pomocí panelu vlevo nahoře.`,
+      title: "Okruhy a jejich sestavy",
+      text: `Základními stavebními prvky jsou <strong>Okruhy</strong> (jednotlivé losovací karty), u kterých si můžete nastavit číselné rozmezí (od–do). Pro lepší pořádek si můžete okruhy sdružovat do <strong>Sestav</strong> – například pro různé specializace studentů nebo komise. Novou sestavu snadno přidáte přes tlačítko <span class="whitespace-nowrap"><strong>ozubeného kola</strong> <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>.</span> Mezi sestavami následně přepínáte pomocí panelu vlevo nahoře. <strong>Dvojklikem</strong> na název sestavy ji přejmenujete.`,
       visual: `
         <div class="w-full h-40 bg-slate-50 rounded-2xl border border-slate-200 p-4 flex gap-3">
           <div class="w-1/3 bg-white rounded-xl border border-slate-200 p-2 shadow-sm flex flex-col gap-2">
@@ -55,7 +55,7 @@
     },
     {
       title: "Různé režimy losování",
-      text: `U každého okruhu najdete ikonu šipek <i data-lucide="repeat" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>. Pokud na ni kliknete, zapnete režim <strong>Losovat bez opakování</strong> <i data-lucide="repeat-off" class="w-4 h-4 inline text-orange-500 align-sub mx-0.5"></i>. Aplikace si začne pamatovat již tažená čísla a zajistí, že se žádné z nich nebude při dalším losování opakovat. Zároveň uvidíte, kolik otázek ještě zbývá k tažení.`,
+      text: `U každého okruhu najdete ikonu <span class="whitespace-nowrap">šipek <i data-lucide="repeat" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>.</span> Pokud na ni kliknete, zapnete režim <span class="whitespace-nowrap"><strong>Losovat bez opakování</strong> <i data-lucide="repeat-off" class="w-4 h-4 inline text-orange-500 align-sub mx-0.5"></i>.</span> Aplikace si začne pamatovat již tažená čísla a zajistí, že se žádné z nich nebude při dalším losování opakovat. Zároveň uvidíte, kolik otázek ještě zbývá k tažení.`,
       visual: `
         <div class="w-full h-32 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col items-center justify-center gap-4 relative overflow-hidden">
           <div class="flex items-center justify-between w-full px-8">
@@ -70,7 +70,7 @@
     },
     {
       title: "Zkouškové otázky i s názvy",
-      text: `Každý okruh můžete jednoduše propojit s textovou sadou otázek pomocí ikony sad <i data-lucide="layers" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>. V aplikaci už rovnou najdete <strong>předpřipravené sady otázek pro státnicové předměty</strong>. Číselné rozmezí okruhu se pak automaticky přizpůsobí počtu otázek v dané sadě a ikona se změní na <i data-lucide="link" class="w-4 h-4 inline text-[#0000dc] align-sub mx-0.5"></i>.`,
+      text: `Každý okruh můžete jednoduše propojit s textovou sadou otázek pomocí ikony <span class="whitespace-nowrap">sad <i data-lucide="layers" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>.</span> V aplikaci už rovnou najdete <strong>předpřipravené sady otázek pro státnicové předměty</strong>. Číselné rozmezí okruhu se pak automaticky přizpůsobí počtu otázek v dané sadě a ikona se změní na <span class="whitespace-nowrap">propojení <i data-lucide="link" class="w-4 h-4 inline text-[#0000dc] align-sub mx-0.5"></i>.</span>`,
       visual: `
         <div class="w-full h-36 bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col gap-3 relative">
           <div class="flex justify-between items-center">
@@ -84,13 +84,13 @@
           <div class="flex-1 bg-slate-50 rounded-xl border border-slate-100 flex items-center px-3 gap-3">
             <div class="text-2xl font-black text-[#0f172a]">7</div>
             <div class="w-px h-8 bg-slate-200"></div>
-            <div class="text-xs font-medium text-slate-600 line-clamp-2">Základní diagnostická kritéria pro...</div>
+            <div class="text-xs font-medium text-slate-600 line-clamp-2">Poruchy duševní a poruchy chování...</div>
           </div>
         </div>`
     },
     {
       title: "Vytvářejte a upravujte sady otázek",
-      text: `Své vlastní seznamy otázek můžete spravovat kliknutím na ikonu ozubeného kola <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i> a výběrem možnosti <strong>Správa otázek</strong>. Nové sady vytvoříte tak, že do nich jednoduše zkopírujete seznam otázek z Excelu či Wordu nebo otázky (jejich názvy) napíšete ručně, každou na nový řádek.`,
+      text: `Své vlastní sady otázek můžete spravovat kliknutím na ikonu ozubeného <span class="whitespace-nowrap">kola <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i></span> a výběrem možnosti <strong>Správa otázek</strong>. Nové sady vytvoříte tak, že do nich jednoduše zkopírujete seznam otázek z Excelu či Wordu nebo otázky (jejich názvy) napíšete ručně, každou na nový řádek. Stisknutím <strong>Uložit</strong> se vytvořená sada uloží do paměti vašeho prohlížeče.`,
       visual: `
         <div class="w-full h-40 bg-slate-50 rounded-2xl border border-slate-200 flex items-end justify-center pb-4 relative">
            <div class="w-48 bg-white border border-slate-100 rounded-2xl shadow-xl p-1.5 relative z-10 mr-12 mb-4">
