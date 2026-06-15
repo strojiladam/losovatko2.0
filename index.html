@@ -159,13 +159,13 @@
             class="hidden absolute top-[80px] right-0 w-48 bg-white border border-slate-100 rounded-2xl shadow-xl z-50 p-1.5 animate-pop-in origin-top-right">
             <button id="btn-add-set-dropdown"
               class="w-full text-left px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-[#0000dc] transition-colors flex items-center gap-2 rounded-xl">
-              <i data-lucide="layers" class="w-4 h-4"></i>
+              <i data-lucide="folder-plus" class="w-4 h-4"></i>
               Přidat sestavu
             </button>
             <div class="h-px bg-slate-100 my-1"></div>
             <button id="btn-manage-questions"
               class="w-full text-left px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-[#0000dc] transition-colors flex items-center gap-2 rounded-xl">
-              <i data-lucide="database" class="w-4 h-4"></i>
+              <i data-lucide="layers" class="w-4 h-4"></i>
               Správa otázek
             </button>
           </div>
@@ -185,7 +185,7 @@
           <div class="p-5 border-b border-slate-100 flex justify-between items-center shrink-0">
             <div class="flex items-center gap-3">
               <div class="p-2 bg-indigo-50 text-[#0000dc] rounded-xl">
-                <i data-lucide="database" class="w-5 h-5"></i>
+                <i data-lucide="layers" class="w-5 h-5"></i>
               </div>
               <h2 class="text-lg font-bold text-slate-800">Správa sad otázek</h2>
             </div>
@@ -241,7 +241,7 @@
             <!-- Right side: Empty state -->
             <div id="qm-empty-state"
               class="w-2/3 flex flex-col items-center justify-center text-slate-400 p-8 text-center">
-              <i data-lucide="database" class="w-12 h-12 mb-4 opacity-20"></i>
+              <i data-lucide="layers" class="w-12 h-12 mb-4 opacity-20"></i>
               <p class="text-sm font-medium">Vyberte sadu vlevo nebo vytvořte novou</p>
             </div>
           </div>
@@ -369,7 +369,7 @@
       div.innerHTML = `
         <div class="flex items-center justify-between text-slate-400 mb-2 px-1 cursor-pointer select-none group btn-toggle-collapse">
            <div class="flex items-center gap-2">
-             <i data-lucide="layers" class="w-5 h-5"></i>
+             <i data-lucide="folders" class="w-5 h-5"></i>
              <h2 class="text-xs font-bold uppercase tracking-wider">Sestavy</h2>
            </div>
            <button class="p-1 rounded-full bg-slate-100 group-hover:bg-slate-200 transition-colors">
@@ -487,7 +487,7 @@
               <span class="text-xs font-bold whitespace-nowrap transition-opacity duration-300 ${category.noRepeat ? 'opacity-100' : 'opacity-0'}">Zbývá ${getRemainingCount(category)}</span>
             </button>
             <button class="btn-assign p-1 ${category.questionSetId ? 'text-[#0000dc]' : 'text-slate-400 hover:text-[#0000dc]'} hover:bg-indigo-50 rounded-full transition-colors" title="${category.questionSetId ? 'Změnit / odpojit sadu' : 'Přiřadit sadu otázek'}">
-              <i data-lucide="${category.questionSetId ? 'link' : 'database'}" class="w-4 h-4"></i>
+              <i data-lucide="${category.questionSetId ? 'link' : 'layers'}" class="w-4 h-4"></i>
             </button>
             <button class="btn-delete p-1 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors" title="Smazat okruh">
               <i data-lucide="trash-2" class="w-4 h-4"></i>
