@@ -8,12 +8,12 @@ const STATNICOVE_SADY = [
       "Paměť",
       "Učení",
       "Inteligence",
-      "Myšlení a rozhodování",
+      "Myšlení a rozhodování, řešení problémů",
       "Řeč, jazyk",
       "Emoce",
       "Psychofyziologické indikátory emocí",
       "Motivace",
-      "Regulace emocí a nálad",
+      "Regulace emocí a nálad, vyšší emoce, seberegulace, prokrastinace, kontrola impulzů, nastavování cílů, vnímání odměn a incentiv, vůle a volní procesy, sebekontrola jako mechanizmus vůle.",
       "Vztah mezi kognitivními procesy a emocemi",
       "Vědomí a sebe-uvědomování"
     ]
@@ -22,18 +22,18 @@ const STATNICOVE_SADY = [
     id: "bc-vyvojova",
     name: "Bc. Vývojová psychologie",
     questions: [
-      "Teorie a modely",
-      "Darwinismus, etologie a současné biologizující pohledy",
-      "Ekologický model vývoje",
+      "Vývojové teorie a vývojové modely",
+      "Darwinismus, etologie a současné biologizující pohledy na psychický vývoj (sociobiologie, evoluční psychologie)",
+      "Ekologický model vývoje, situační a kontextuální aspekty v ontogenezi",
       "Dědičnost versus prostředí",
-      "Prenatální vývoj a novorozenecké období",
-      "Kojenecké období",
-      "Batolecí období",
+      "Prenatální vývoj, porod, novorozenecké období, poporodní adaptace a období šestinedělí (z hlediska vývoje dítěte i matky a rodiny)",
+      "První rok života – kojenecké období",
+      "Období batolete",
       "Předškolní věk",
       "Mladší školní věk",
       "Adolescence",
       "Dospělost",
-      "Stáří"
+      "Stárnutí a stáří"
     ]
   },
   {
@@ -79,15 +79,15 @@ const STATNICOVE_SADY = [
     id: "mgr-teorie",
     name: "Mgr. Teorie a systémy",
     questions: [
-      "Adaptace",
+      "Psychologické pojetí adaptace",
       "Percepce",
       "Potřeby a motivy",
-      "Emoce",
+      "Současné psychologické teorie emocí",
       "Myšlení a řešení problémů",
-      "Vědomí",
-      "Komunikace",
-      "Osobnost",
-      "Skupinové chování",
+      "Vědomí jako psychologická kategorie, možná vymezení a atributy",
+      "Psychologické teorie komunikace",
+      "Osobnost jako jedinečný člověk (subjekt) a jako teoretický výkladový konstrukt",
+      "Teorie skupinového chování vysvětlující konformitu, prosociální chování, skupinovou facilitaci a zahálení, kooperaci a soupeření",
       "Jedinec a společnost"
     ]
   },
@@ -96,7 +96,7 @@ const STATNICOVE_SADY = [
     name: "Mgr. Klinická psychologie",
     questions: [
       "Pojetí normality člověka a zdraví. Kvalita života. Duševní hygiena. Psychosomatický pohled na zdraví a nemoc. Rodinné a systémové souvislosti duševní nemoci. Teorie působení stresu.",
-      "Poruchy osobnosti a chování u dospělých: specifické poruchy osobnosti (F 60).",
+      "Poruchy osobnosti a chování u dospělých: specifické poruchy osobnosti (F60).",
       "Poruchy pohlavní identity (F64) a poruchy sexuální preference (F65). Sexuální dysfunkce (F52).",
       "Neurotické, stresové a somatoformní poruchy (F40-F48). Poruchy spánku (F51).",
       "Schizofrenie, poruchy schizotypální a poruchy s bludy (F20-F29).",
@@ -115,7 +115,7 @@ const STATNICOVE_SADY = [
       "Konstrukce a vlastnosti psychodiagnostických metod. Psychometrické vlastnosti testů. Standardizace. Validita diagnostické metody a způsoby jejího zjišťování, druhy validity. Reliabilita a způsoby jejího zjišťování, zdroje chyb měření. Normalizace a druhy norem (věkové, kvantilové, standardní).",
       "Testování kognitivních schopností – principy a kulturní aspekty testování, testy. Oblasti a způsoby užití testů inteligence a kognitivních schopností. XBA přístup. Kulturní aspekty testování inteligence. Faktory ovlivňující validitu výsledků vyšetření.",
       "Diagnostika osobnosti a individuálních rozdílů. Oblasti využití osobnostní diagnostiky. Projektivní techniky a testy. Princip fungování a klasifikace osobnostních dotazníků a škál. Faktory ovlivňující validitu výsledků vyšetření. Jednodimenzionální a vícedimenzionální osobnostní dotazníky. Dotazníky konstruované na základě teorií osobnosti, empirické dotazníkové metody, dotazníky konstruované na základě faktorové analýzy atd.",
-      "Diagnostika raného vývoje. Vývojové škály – přehled a principy interpretace, zevrubněji popsat Gesselovy vývojové škály a škály Bayleyové. Prediktivní validita."
+      "Diagnostika raného vývoje. Vývojové škály – přehled a principy interpretace, zevrubněji popsat Gesellovy vývojové škály a škály Bayleyové. Prediktivní validita."
     ]
   },
   {
@@ -123,17 +123,17 @@ const STATNICOVE_SADY = [
     name: "Mgr. Pedagogická psychologie",
     questions: [
       "Specifika práce s dětmi a dospívajícími v poradenském systému. Průběh vyšetření (vývojové hledisko, úvodní rozhovor, anamnéza, pracovní hypotéza, pracovní postup), zpráva z psychologického vyšetření (rodič, škola), etické aspekty práce s dětmi, dospívajícími a rodinami.",
-      "Předškolní období a zahájení školní docházky: propojení anamnézy z cílem vyšetření, opoždění a nerovnoměrnost vývoje. Nástup do školy, školní zralost a její diagnostika. Adaptace na školní docházku, možné problémy. Lateralita jako poradenský problém.",
+      "Předškolní období a zahájení školní docházky: propojení anamnézy s cílem vyšetření, opoždění a nerovnoměrnost vývoje. Nástup do školy, školní zralost a její diagnostika. Adaptace na školní docházku, možné problémy. Lateralita jako poradenský problém.",
       "Základní školní docházka, prospěchová selhávání na různých stupních vzdělávání. Kognitivní a motivační aspekty, kontext výchovně-vzdělávacího procesu, zdravotního stavu, faktory širšího sociálního prostředí. Teoretická východiska a praktické možnosti diagnostiky kognitivních schopností a vzdělávacích potřeb.",
-      "Specifické otázky poradentství u žáků a studentů středních škol. Utváření identity v adolescenci a jeho dopad na vzdělávací proces, důvody pro změnu studijního zaměření. Předčasné odchody ze vzdělávání a jejich prevence. Kariérové poradenství pro žáky, kompetence škol a školských poradenských zařízení. Významné teorie profesní orientace a jejich aplikace do oblasti pedagogicko-psychologického poradenství. Metody pro zjišťování profesních preferencí u žáků a studentů.",
-      "Diagnostika klimatu třídy a vztahů ve třídě s ohledem na vhodnost použití pro jednotlivé stupně vzdělávání, etika při diagnostice vztahů ve třídě, prevence a intervence. Práce se školní třídou jako skupinou podle sociálně – psychologických a poradenských principů. Osobnost a vyučovací styl učitele, jejich vliv na jednotlivé žáky a na třídu jako celek. Poskytování psychologické a metodické podpory pedagogům. Rizika spojená s nezvládnutím učitelské role, syndrom vyhoření, šikana vyučujících.",
+      "Specifické otázky poradenství u žáků a studentů středních škol. Utváření identity v adolescenci a jeho dopad na vzdělávací proces, důvody pro změnu studijního zaměření. Předčasné odchody ze vzdělávání a jejich prevence. Kariérové poradenství pro žáky, kompetence škol a školských poradenských zařízení. Významné teorie profesní orientace a jejich aplikace do oblasti pedagogicko-psychologického poradenství. Metody pro zjišťování profesních preferencí u žáků a studentů.",
+      "Diagnostika klimatu třídy a vztahů ve třídě s ohledem na vhodnost použití pro jednotlivé stupně vzdělávání, etika při diagnostice vztahů ve třídě, prevence a intervence. Práce se školní třídou jako skupinou podle sociálně-psychologických a poradenských principů. Osobnost a vyučovací styl učitele, jejich vliv na jednotlivé žáky a na třídu jako celek. Poskytování psychologické a metodické podpory pedagogům. Rizika spojená s nezvládnutím učitelské role, syndrom vyhoření, šikana vyučujících.",
       "Vzdělávání dětí, žáků a studentů se speciálními vzdělávacími potřebami: legislativní ukotvení, využití podpůrných opatření. Plán pedagogické podpory a Individuální vzdělávací plán, využití asistenta pedagoga. Role školských poradenských zařízení a školního poradenského pracoviště v procesu diagnostiky a poradenství pro tyto žáky. Specifické poruchy učení, příčiny, projevy, diagnostika, reedukace a kompenzace, hodnocení a klasifikace na různých stupních vzdělávání. Uzpůsobení podmínek pro konání maturitní zkoušky.",
       "Psychologické poradenství pro rodiče dětí a dospívajících: podpora zvládání výchovy v běžných podmínkách vývoje, výchova dětí/dospívajících se specifickými potřebami: ADHD, PAS, externalizované a internalizované problémy, vývojová porucha intelektu, raná péče.",
       "ADHD/ADD; poruchy chování v dětském věku: etiologie, symptomy, diagnostika, komorbidita, specifika v dětství a dospívání, doporučení pro přístup rodičů a učitelů, hodnocení školního výkonu. Dítě s ADHD v třídním kolektivu, doporučení a intervence.",
       "Děti z odlišného socio-kulturního prostředí, problematika chudoby. Socioekonomický status rodiny a souvislost se vzděláváním. Problematika vzdělávání cizinců a žáků znevýhodněných omezenou znalostí vyučovacího jazyka.",
-      "Děti a dospívající vývojovou poruchou intelektu, etiologie a patogeneze. Klinické obrazy a diagnostika vývojové poruchy intelektu, průběh, prognóza, možnosti vzdělávání, péče. Širší kontext problematiky testování vývoje intelektu, vývojové škály a testy intelektu.",
+      "Děti a dospívající s vývojovou poruchou intelektu, etiologie a patogeneze. Klinické obrazy a diagnostika vývojové poruchy intelektu, průběh, prognóza, možnosti vzdělávání, péče. Širší kontext problematiky testování vývoje intelektu, vývojové škály a testy intelektu.",
       "Děti a dospívající se smyslovým postižením, zejména zrakové a sluchové vnímání, kategorie postižení. Podpora, komunikace, raná péče, zahájení školní docházky, zásady výchovy a vzdělávání dětí a žáků se smyslovým postižením. Možnosti a specifika diagnostiky dětí se smyslovým postižením.",
-      "Děti a dospívající s tělesným a kombinovaným postižením, nejčastější typy postižení (DMO a její formy, malformace, myopatie, úrazy), a onemocnění (onkologické, neurologické, metabolické). Možnosti vzdělávání žáků s tělesnýma kombinovaným postižením, se závažným onemocněním.",
+      "Děti a dospívající s tělesným a kombinovaným postižením, nejčastější typy postižení (DMO a její formy, malformace, myopatie, úrazy), a onemocnění (onkologické, neurologické, metabolické). Možnosti vzdělávání žáků s tělesným a kombinovaným postižením, se závažným onemocněním.",
       "Děti s narušenou komunikační schopností. Vývojové poruchy řeči. Vývoj řeči v normě a patologii, poruchy. Elektivní mutismus. Vývojová dysfázie. Diagnostika, reedukace, možnosti vzdělávání.",
       "Děti a dospívající s poruchami autistického spektra, klasifikace, etiologie a prevalence, komorbidita, symptomatika, diagnostika (srovnání MKN-10 a DSM-V), intervence, možnosti výchovy a vzdělávání, životní perspektiva.",
       "Děti nadané a mimořádně nadané, nadání v útlém věku, dvojí výjimečnost, typické charakteristiky a projevy, diagnostika mimořádně nadaných dětí, identifikace nadání rodiči a učiteli, specifické sociální a emocionální problémy, podvýkon, zásady a možnosti vzdělávání nadaných žáků (akcelerace, obohacování, integrace).",

@@ -6,8 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Losovátko otázek</title>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
-  <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Knihovny jsou hostované lokálně (žádné požadavky na CDN třetích stran → neodchází IP adresa uživatele) -->
+  <script src="vendor/tailwindcss-browser-4.3.5.js"></script>
+  <script src="vendor/lucide-1.77.0.min.js"></script>
   <style>
     @keyframes fade-in-down {
       0% {
@@ -149,7 +150,7 @@
       </div>
       <button onclick="window.openTutorial()"
         class="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-500 hover:text-[#0000dc] hover:bg-indigo-50 rounded-xl transition-colors">
-        <i data-lucide="help-circle" class="w-5 h-5"></i>
+        <i data-lucide="circle-help" class="w-5 h-5"></i>
         <span class="hidden sm:inline">Jak to funguje?</span>
       </button>
     </header>
@@ -176,8 +177,11 @@
         <div class="w-[96px] h-full shrink-0 flex flex-col gap-4 relative">
           <!-- Gear Icon Button -->
           <button id="btn-settings"
-            class="w-full h-[72px] shrink-0 border border-slate-200 rounded-[24px] text-slate-400 font-bold hover:border-slate-300 hover:text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center shadow-sm bg-white hover:shadow-md group">
+            class="relative w-full h-[72px] shrink-0 border border-slate-200 rounded-[24px] text-slate-400 font-bold hover:border-slate-300 hover:text-slate-600 hover:bg-slate-50 transition-all flex items-center justify-center shadow-sm bg-white hover:shadow-md group">
             <i data-lucide="settings" class="w-6 h-6 group-hover:rotate-90 transition-transform duration-300"></i>
+            <!-- Počet neaktuálních státnicových sad (plní JS) -->
+            <span id="settings-outdated-badge"
+              class="hidden absolute -top-1.5 -right-1.5 min-w-[20px] h-5 px-1 rounded-full bg-red-500 text-white text-[11px] font-bold leading-none flex items-center justify-center ring-2 ring-slate-50 shadow-sm"></span>
           </button>
 
           <!-- Dropdown Menu -->
@@ -193,6 +197,8 @@
               class="w-full text-left px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-[#0000dc] transition-colors flex items-center gap-2 rounded-xl">
               <i data-lucide="layers" class="w-4 h-4"></i>
               Správa otázek
+              <span id="manage-outdated-badge"
+                class="hidden ml-auto min-w-[18px] h-[18px] px-1 rounded-full bg-red-500 text-white text-[10px] font-bold leading-none flex items-center justify-center"></span>
             </button>
           </div>
 
@@ -244,18 +250,18 @@
               </div>
               <div class="flex-1 flex flex-col min-h-[200px]">
                 <div class="flex justify-between items-end mb-1.5">
-                  <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Otázky (jedna na
-                    řádek)</label>
+                  <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Otázky</label>
                   <span class="text-[10px] font-bold text-[#0000dc] bg-indigo-50 px-2 py-1 rounded-lg"
                     id="qm-q-count">Otázek: 0</span>
                 </div>
                 <textarea id="qm-set-questions"
                   class="w-full flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0000dc] resize-none whitespace-pre-wrap custom-scrollbar"
-                  placeholder="Zkopírujte sem sloupec ze spreadsheetu..."></textarea>
+                  placeholder="Zkopírujte sloupec z tabulky, případně otázky oddělujte enterem"></textarea>
               </div>
               <div class="flex justify-end gap-2 shrink-0 pt-3 border-t border-slate-100">
                 <button id="btn-qm-delete"
                   class="px-4 py-2 text-sm font-bold text-red-500 hover:bg-red-50 disabled:hover:bg-transparent disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-colors hidden mr-auto">Smazat</button>
+                <!-- Vzhled a tooltip nastavuje renderRestoreButton() podle toho, zda je sada aktuální -->
                 <button id="btn-qm-restore"
                   class="px-3 py-2 text-slate-400 hover:text-[#0000dc] hover:bg-indigo-50 rounded-xl transition-colors hidden"
                   title="Obnovit výchozí otázky"><i data-lucide="rotate-ccw" class="w-4 h-4"></i></button>
@@ -277,6 +283,13 @@
 
     <footer class="mt-12 pt-6 border-t border-slate-200/80 text-center text-sm text-slate-400 w-full">
       © 2026 Adam Strojil | Katedra psychologie FSS MU
+      <p class="mt-2 text-xs text-slate-400/80 max-w-2xl mx-auto leading-relaxed">
+        Aplikace neodesílá žádná data – okruhy i sady otázek se ukládají pouze ve vašem prohlížeči.
+        Stránku hostuje GitHub&nbsp;Pages, který z bezpečnostních důvodů zaznamenává IP adresy návštěvníků
+        (<a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"
+          target="_blank" rel="noopener noreferrer" class="underline hover:text-[#0000dc]">zásady ochrany soukromí
+          GitHubu</a>).
+      </p>
     </footer>
   </div>
   <script src="otazky.js"></script>
@@ -291,21 +304,91 @@
     const settingsDropdown = document.getElementById('settings-dropdown');
     const btnAddSet = document.getElementById('btn-add-set-dropdown');
 
+    // Escapes user text before it goes into innerHTML / attribute values
+    // (names with quotes or "<" would otherwise break the markup).
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // crypto.randomUUID exists only in secure contexts (HTTPS / localhost).
+    function uid() {
+      if (window.crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+      return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 10);
+    }
+
     let sets = [];
     let activeSetId = null;
     let isSetsCollapsed = localStorage.getItem('stateExamSetsCollapsed') === 'true';
-    let questionSets = JSON.parse(localStorage.getItem('stateExamQuestionSets')) || [];
+    let questionSets = [];
+    try {
+      const parsedQs = JSON.parse(localStorage.getItem('stateExamQuestionSets'));
+      if (Array.isArray(parsedQs)) questionSets = parsedQs;
+    } catch (e) {
+      console.error("Failed to parse question sets from local storage.", e);
+    }
 
-    // Auto-load state exam questions if they haven't been loaded yet
-    if (!localStorage.getItem('statniceSetsLoaded_v1') && typeof STATNICOVE_SADY !== 'undefined') {
+    // Official state-exam sets (otazky.js) — on every load add any official set the browser doesn't have yet
+    // (first visit, or a set newly added to otazky.js). Existing sets are never overwritten here;
+    // differences are only flagged in the UI (see getOutdatedReasons) and the user updates them explicitly.
+    // Copies are stored, so editing a set can never mutate the STATNICOVE_SADY reference data.
+    function copyOfficialSet(s) {
+      return { id: s.id, name: s.name, questions: [...s.questions] };
+    }
+
+    if (typeof STATNICOVE_SADY !== 'undefined') {
       const existingIds = questionSets.map(s => s.id);
-      const newSets = STATNICOVE_SADY.filter(s => !existingIds.includes(s.id));
+      const newSets = STATNICOVE_SADY.filter(s => !existingIds.includes(s.id)).map(copyOfficialSet);
 
       if (newSets.length > 0) {
         questionSets = [...newSets, ...questionSets];
         localStorage.setItem('stateExamQuestionSets', JSON.stringify(questionSets));
       }
-      localStorage.setItem('statniceSetsLoaded_v1', 'true');
+    }
+
+    function getOfficialSet(id) {
+      return typeof STATNICOVE_SADY !== 'undefined' ? STATNICOVE_SADY.find(s => s.id === id) : null;
+    }
+
+    // Whitespace-insensitive per line, so saving through the textarea (which trims lines) never counts as a change.
+    function normalizeQuestion(q) {
+      return String(q ?? '').split(/\r?\n/).map(l => l.trim()).filter(Boolean).join('\n');
+    }
+
+    function czPlural(n, one, few, many) {
+      return n === 1 ? one : (n >= 2 && n <= 4 ? few : many);
+    }
+
+    // null = not an official set, or identical to otazky.js; otherwise a list of human-readable reasons.
+    function getOutdatedReasons(qs) {
+      const official = qs ? getOfficialSet(qs.id) : null;
+      if (!official) return null;
+
+      const reasons = [];
+      if ((qs.name || '').trim() !== official.name.trim()) {
+        reasons.push(`Název sady se liší (aktuálně „${official.name}“).`);
+      }
+      const mine = (qs.questions || []).map(normalizeQuestion);
+      const theirs = official.questions.map(normalizeQuestion);
+      if (mine.length !== theirs.length) {
+        reasons.push(`Počet otázek se liší: v prohlížeči ${mine.length}, aktuálně ${theirs.length}.`);
+      }
+      let changed = 0;
+      for (let i = 0; i < Math.min(mine.length, theirs.length); i++) {
+        if (mine[i] !== theirs[i]) changed++;
+      }
+      if (changed > 0) {
+        reasons.push(`${changed} ${czPlural(changed, 'otázka se liší', 'otázky se liší', 'otázek se liší')} ve znění nebo pořadí.`);
+      }
+      return reasons.length ? reasons : null;
+    }
+
+    function getOutdatedSets() {
+      return questionSets.filter(qs => getOutdatedReasons(qs));
     }
 
     let qmEditingId = null;
@@ -332,11 +415,11 @@
           initialCategories = JSON.parse(savedCats);
         }
         if (initialCategories.length === 0) {
-          initialCategories.push({ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false, noRepeat: false, drawnNumbers: [] });
+          initialCategories.push({ id: uid(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false, noRepeat: false, drawnNumbers: [] });
         }
 
         sets.push({
-          id: crypto.randomUUID(),
+          id: uid(),
           name: 'Sestava 1',
           categories: initialCategories,
           isRollingAll: false
@@ -351,9 +434,9 @@
     } catch (e) {
       console.error("Failed to parse sets from local storage.", e);
       sets = [{
-        id: crypto.randomUUID(),
+        id: uid(),
         name: 'Sestava 1',
-        categories: [{ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false, noRepeat: false, drawnNumbers: [] }],
+        categories: [{ id: uid(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false, noRepeat: false, drawnNumbers: [] }],
         isRollingAll: false
       }];
       activeSetId = sets[0].id;
@@ -381,8 +464,8 @@
             <button class="set-item flex-1 flex items-center justify-between p-3 rounded-2xl transition-all ${isActive ? 'bg-white shadow-sm border border-slate-200 text-[#0000dc]' : 'bg-transparent text-slate-500 hover:bg-slate-100 border border-transparent'}" data-id="${set.id}">
                <div class="flex items-center gap-3 flex-1 min-w-0">
                  <i data-lucide="${isActive ? 'folder-open' : 'folder'}" class="w-5 h-5 shrink-0 ${isActive ? 'text-[#0000dc]' : 'text-slate-400'}"></i>
-                 <span class="set-name-display font-semibold text-sm truncate text-left w-full" title="Dvojitým kliknutím přejmenujete">${set.name}</span>
-                 <input type="text" class="set-name-input hidden w-full bg-slate-50 border border-slate-200 rounded-md px-2 py-0.5 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0000dc]" value="${set.name}">
+                 <span class="set-name-display font-semibold text-sm truncate text-left w-full" title="Dvojitým kliknutím přejmenujete">${escapeHtml(set.name)}</span>
+                 <input type="text" class="set-name-input hidden w-full bg-slate-50 border border-slate-200 rounded-md px-2 py-0.5 text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0000dc]" value="${escapeHtml(set.name)}">
                </div>
                <span class="shrink-0 ml-2 text-xs font-bold ${isActive ? 'bg-indigo-50 text-[#0000dc]' : 'bg-slate-100 text-slate-400'} px-2.5 py-1 rounded-full">${set.categories.length} okruhů</span>
             </button>
@@ -410,7 +493,7 @@
 
       div.querySelectorAll('.set-item').forEach(btn => {
         btn.addEventListener('click', (e) => {
-          if (getActiveSet().isRollingAll) return; // Prevent switching while rolling
+          if (isBusy()) return; // Prevent switching while rolling
           const setId = e.currentTarget.getAttribute('data-id');
           if (setId !== activeSetId) {
             activeSetId = setId;
@@ -463,7 +546,7 @@
       div.querySelectorAll('.btn-delete-set').forEach(btn => {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
-          if (getActiveSet().isRollingAll) return;
+          if (isBusy()) return;
           removeSet(btn.getAttribute('data-id'));
         });
       });
@@ -526,7 +609,7 @@
       </div>
 
       <div class="shrink-0 relative">
-        <input type="text" class="cat-name w-full bg-slate-50 border border-slate-100 rounded-[16px] px-4 py-2.5 text-base font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0000dc] focus:border-transparent transition-all disabled:opacity-80 disabled:bg-slate-100 disabled:text-slate-600 disabled:cursor-not-allowed" placeholder="Okruh..." value="${category.name}" ${category.questionSetId ? 'disabled' : ''}>
+        <input type="text" class="cat-name w-full bg-slate-50 border border-slate-100 rounded-[16px] px-4 py-2.5 text-base font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0000dc] focus:border-transparent transition-all disabled:opacity-80 disabled:bg-slate-100 disabled:text-slate-600 disabled:cursor-not-allowed" placeholder="Okruh..." value="${escapeHtml(category.name)}" ${category.questionSetId ? 'disabled' : ''}>
         ${category.questionSetId ? `<i data-lucide="lock" class="absolute right-4 top-3 w-4 h-4 text-slate-400"></i>` : ''}
       </div>
       
@@ -610,6 +693,7 @@
             unassignBtn.innerHTML = `<i data-lucide="unlink" class="w-3 h-3"></i> Zrušit propojení`;
             unassignBtn.onclick = (ev) => {
               ev.stopPropagation();
+              if (isBusy()) return;
               category.questionSetId = null;
               saveState();
               const oldCard = document.getElementById(`cat-${category.id}`);
@@ -624,9 +708,16 @@
           questionSets.forEach(qs => {
             const btn = document.createElement('button');
             btn.className = `w-full text-left px-3 py-2 text-sm font-medium ${category.questionSetId === qs.id ? 'bg-indigo-50 text-[#0000dc]' : 'text-slate-700 hover:bg-slate-50'} transition-colors rounded-lg flex justify-between items-center mb-0.5`;
-            btn.innerHTML = `<span class="truncate pr-2">${qs.name}</span> <span class="text-[10px] text-slate-400 font-bold bg-slate-100 px-1.5 py-0.5 rounded shrink-0">${qs.questions.length}</span>`;
+            btn.innerHTML = `<span class="truncate pr-2">${escapeHtml(qs.name)}</span> <span class="text-[10px] text-slate-400 font-bold bg-slate-100 px-1.5 py-0.5 rounded shrink-0">${qs.questions.length}</span>`;
+            // An empty set would produce the range 1–0 and draw nonsense numbers.
+            if (qs.questions.length === 0 && category.questionSetId !== qs.id) {
+              btn.disabled = true;
+              btn.title = 'Sada neobsahuje žádné otázky';
+              btn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
             btn.onclick = (ev) => {
               ev.stopPropagation();
+              if (btn.disabled || isBusy()) return;
               if (category.questionSetId === qs.id) {
                 category.questionSetId = null;
               } else {
@@ -634,6 +725,9 @@
                 category.name = qs.name;
                 category.min = 1;
                 category.max = qs.questions.length;
+                // Old result/drawn numbers belong to a different list – would show a question that was never drawn.
+                category.result = null;
+                category.drawnNumbers = [];
               }
               saveState();
               const oldCard = document.getElementById(`cat-${category.id}`);
@@ -717,7 +811,7 @@
         <div class="h-[80%] w-px bg-slate-200/80 shrink-0"></div>
         <div class="flex-1 flex items-center justify-start h-full min-w-0 pr-2">
            <div class="text-sm font-medium text-slate-700 text-left line-clamp-4 leading-relaxed break-words">
-              ${questionText}
+              ${escapeHtml(questionText)}
            </div>
         </div>
       </div>
@@ -828,9 +922,10 @@
     }
 
     function addCategory() {
+      if (isBusy()) return;
       const activeSet = getActiveSet();
       const newCat = {
-        id: crypto.randomUUID(),
+        id: uid(),
         name: `Okruh ${activeSet.categories.length + 1}`,
         min: 1,
         max: 20,
@@ -852,6 +947,7 @@
     }
 
     function removeCategory(id) {
+      if (isBusy()) return;
       const activeSet = getActiveSet();
       const card = document.getElementById(`cat-${id}`);
       if (card) {
@@ -895,11 +991,18 @@
         if (c.drawnNumbers.length >= (safeMax - safeMin + 1)) {
           return null;
         }
-        let available = [];
-        for (let i = safeMin; i <= safeMax; i++) {
-          if (!c.drawnNumbers.includes(i)) available.push(i);
+        const drawnSet = new Set(c.drawnNumbers);
+        let res;
+        if (safeMax - safeMin + 1 > 10000) {
+          // Huge range: building the list of all remaining numbers would freeze the tab.
+          do { res = getRandomInt(safeMin, safeMax); } while (drawnSet.has(res));
+        } else {
+          const available = [];
+          for (let i = safeMin; i <= safeMax; i++) {
+            if (!drawnSet.has(i)) available.push(i);
+          }
+          res = available[Math.floor(Math.random() * available.length)];
         }
-        const res = available[Math.floor(Math.random() * available.length)];
         c.drawnNumbers.push(res);
         return res;
       }
@@ -912,9 +1015,17 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    // True while a "draw all" or a single "Znovu" draw is animating in the active set.
+    // Used to block actions that would overlap with a running draw.
+    function isBusy() {
+      const activeSet = getActiveSet();
+      return !!activeSet.isRollingAll || activeSet.categories.some(c => c.isRolling);
+    }
+
     async function handleDraw() {
       const activeSet = getActiveSet();
       if (activeSet.categories.length === 0) return;
+      if (isBusy()) return;
 
       let maxWheelDuration = 0;
       activeSet.categories.forEach((c, index) => {
@@ -965,6 +1076,7 @@
       const activeSet = getActiveSet();
       const c = activeSet.categories.find(cat => cat.id === id);
       if (!c) return;
+      if (activeSet.isRollingAll || c.isRolling) return;
 
       const newResult = drawNumberForCategory(c);
       if (newResult === null) return;
@@ -990,7 +1102,7 @@
 
     function handleReset() {
       const activeSet = getActiveSet();
-      if (activeSet.isRollingAll) return;
+      if (isBusy()) return;
       activeSet.categories.forEach(c => {
         c.result = null;
         c.isRolling = false;
@@ -1004,10 +1116,11 @@
     }
 
     function addSet() {
+      if (isBusy()) return;
       const newSet = {
-        id: crypto.randomUUID(),
+        id: uid(),
         name: `Sestava ${sets.length + 1}`,
-        categories: [{ id: crypto.randomUUID(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false, noRepeat: false, drawnNumbers: [] }],
+        categories: [{ id: uid(), name: 'Okruh 1', min: 1, max: 20, result: null, isRolling: false, noRepeat: false, drawnNumbers: [] }],
         isRollingAll: false
       };
       sets.push(newSet);
@@ -1050,50 +1163,105 @@
       localStorage.setItem('stateExamQuestionSets', JSON.stringify(questionSets));
     }
 
+    const settingsOutdatedBadge = document.getElementById('settings-outdated-badge');
+    const manageOutdatedBadge = document.getElementById('manage-outdated-badge');
+
+    // Red count badges on the gear button and on "Správa otázek" in the dropdown.
+    function updateOutdatedIndicators() {
+      const n = getOutdatedSets().length;
+      const label = n > 0
+        ? `${n} ${czPlural(n, 'sada státnicových otázek není aktuální', 'sady státnicových otázek nejsou aktuální', 'sad státnicových otázek není aktuálních')}`
+        : '';
+      [settingsOutdatedBadge, manageOutdatedBadge].forEach(badge => {
+        badge.textContent = n > 0 ? String(n) : '';
+        badge.classList.toggle('hidden', n === 0);
+      });
+      if (n > 0) {
+        btnSettings.title = label;
+        btnManageQuestions.title = label + ' – otevřete Správu otázek a klikněte na Aktualizovat';
+      } else {
+        btnSettings.removeAttribute('title');
+        btnManageQuestions.removeAttribute('title');
+      }
+    }
+
+    const RESTORE_BTN_DEFAULT_CLASS = 'px-3 py-2 text-slate-400 hover:text-[#0000dc] hover:bg-indigo-50 rounded-xl transition-colors';
+
+    // Subtle icon when the set matches otazky.js; red "Aktualizovat" button with "!" badge and tooltip when it doesn't.
+    function renderRestoreButton(qs) {
+      if (!qs || !getOfficialSet(qs.id)) {
+        btnQmRestore.className = RESTORE_BTN_DEFAULT_CLASS + ' hidden';
+        return;
+      }
+      const reasons = getOutdatedReasons(qs);
+      if (reasons) {
+        btnQmRestore.className = 'relative group flex items-center gap-1.5 px-3 py-2 text-sm font-bold text-red-600 bg-red-50 border border-red-300 hover:bg-red-100 hover:border-red-400 rounded-xl transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400';
+        btnQmRestore.removeAttribute('title');
+        btnQmRestore.setAttribute('aria-label', 'Aktualizovat sadu. ' + reasons.join(' '));
+        btnQmRestore.innerHTML = `
+          <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+          <span>Aktualizovat</span>
+          <span aria-hidden="true" class="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] font-black leading-none flex items-center justify-center ring-2 ring-white">!</span>
+          <span role="tooltip" class="pointer-events-none hidden group-hover:block group-focus-visible:block absolute bottom-full right-0 mb-2 w-72 max-w-[calc(100vw-4rem)] z-20 p-3 rounded-xl bg-slate-800 text-white text-xs font-medium text-left leading-relaxed shadow-xl">
+            <span class="block font-bold mb-1">Sada není aktuální</span>
+            ${reasons.map(r => `<span class="block">• ${escapeHtml(r)}</span>`).join('')}
+            <span class="block mt-1.5 text-slate-300">Kliknutím ji nahradíte aktuální verzí otázek.</span>
+          </span>`;
+      } else {
+        btnQmRestore.className = RESTORE_BTN_DEFAULT_CLASS;
+        btnQmRestore.title = 'Sada je aktuální – obnovit výchozí otázky';
+        btnQmRestore.removeAttribute('aria-label');
+        btnQmRestore.innerHTML = '<i data-lucide="rotate-ccw" class="w-4 h-4"></i>';
+      }
+      lucide.createIcons({ root: btnQmRestore });
+    }
+
     function renderQmSetsList() {
       qmSetsList.innerHTML = '';
       questionSets.forEach(qs => {
         const btn = document.createElement('button');
         const isActive = qmEditingId === qs.id;
+        const reasons = getOutdatedReasons(qs);
         btn.className = 'w-full text-left px-3 py-2 text-sm font-medium transition-colors rounded-xl flex justify-between items-center mb-1 ' + (isActive ? 'bg-indigo-50 text-[#0000dc]' : 'text-slate-700 hover:bg-slate-50');
-        btn.innerHTML = '<span class="truncate pr-2">' + qs.name + '</span> <span class="text-[10px] font-bold ' + (isActive ? 'bg-[#0000dc]/10' : 'bg-slate-100 text-slate-400') + ' px-1.5 py-0.5 rounded shrink-0">' + qs.questions.length + '</span>';
+        const countChip = reasons
+          ? '<span class="flex items-center gap-1 shrink-0">'
+          + '<span aria-hidden="true" class="w-4 h-4 rounded-full bg-red-500 text-white text-[10px] font-black leading-none flex items-center justify-center">!</span>'
+          + '<span class="text-[10px] font-bold bg-red-50 text-red-600 ring-1 ring-red-200 px-1.5 py-0.5 rounded">' + qs.questions.length + '</span>'
+          + '</span>'
+          : '<span class="text-[10px] font-bold ' + (isActive ? 'bg-[#0000dc]/10' : 'bg-slate-100 text-slate-400') + ' px-1.5 py-0.5 rounded shrink-0">' + qs.questions.length + '</span>';
+        btn.innerHTML = '<span class="truncate pr-2">' + escapeHtml(qs.name) + '</span> ' + countChip;
+        if (reasons) btn.title = 'Sada není aktuální: ' + reasons.join(' ');
         btn.onclick = () => openQmEdit(qs.id);
         qmSetsList.appendChild(btn);
       });
     }
 
-    function parseQuestions(text) {
-      const lines = text.split(/\r?\n/).map(l => l.trim());
-      const questions = [];
-      const hasNumbers = lines.some(l => /^\d+[\.\)]\s+/.test(l));
+    // One question = one line (separated by Enter); soft-wrapping in the editor doesn't matter.
+    // A leading list number ("1. ", "2) ", or a bare "3.") is removed — the editor renumbers on its own,
+    // so lines can be added, deleted or moved without fixing numbers by hand.
+    const LIST_NUMBER_RE = /^\d+[.)](\s+|$)/;
 
-      if (hasNumbers) {
-        let currentQ = [];
-        for (const line of lines) {
-          if (line.length === 0) continue;
-          const match = line.match(/^\d+[\.\)]\s+(.*)/);
-          if (match) {
-            if (currentQ.length > 0) questions.push(currentQ.join('\n'));
-            currentQ = [match[1]];
-          } else {
-            if (currentQ.length > 0) {
-              currentQ.push(line);
-            } else {
-              currentQ = [line];
-            }
-          }
-        }
-        if (currentQ.length > 0) questions.push(currentQ.join('\n'));
-      } else {
-        for (const line of lines) {
-          if (line.length > 0) questions.push(line);
-        }
-      }
-      return questions;
+    function parseQuestions(text) {
+      return String(text)
+        .split(/\r?\n/)
+        .map(l => l.trim().replace(LIST_NUMBER_RE, '').trim())
+        .filter(l => l.length > 0);
     }
 
     function formatQuestions(questions) {
-      return questions.map((q, i) => `${i + 1}. ${q}`).join('\n');
+      // Older versions could store a question spanning several lines – show each line as its own question.
+      const lines = questions.flatMap(q => String(q).split(/\r?\n/)).map(l => l.trim()).filter(Boolean);
+      return lines.map((q, i) => `${i + 1}. ${q}`).join('\n');
+    }
+
+    // Renumbers the textarea, keeping the caret at the end of the question it was in.
+    function renumberQuestionsEditor() {
+      const caretQuestion = parseQuestions(qmSetQuestions.value.slice(0, qmSetQuestions.selectionEnd)).length;
+      const questions = parseQuestions(qmSetQuestions.value);
+      qmSetQuestions.value = formatQuestions(questions);
+      const pos = caretQuestion === 0 ? 0 : formatQuestions(questions.slice(0, caretQuestion)).length;
+      qmSetQuestions.setSelectionRange(pos, pos);
+      qmQCount.textContent = 'Otázek: ' + questions.length;
     }
 
     function openQmEdit(id) {
@@ -1105,15 +1273,14 @@
       const qs = questionSets.find(s => s.id === id);
       qmSetName.value = qs.name;
       qmSetQuestions.value = formatQuestions(qs.questions);
-      qmQCount.textContent = 'Otázek: ' + qs.questions.length;
+      qmQCount.textContent = 'Otázek: ' + parseQuestions(qmSetQuestions.value).length;
       btnQmDelete.classList.remove('hidden');
 
-      if (typeof STATNICOVE_SADY !== 'undefined' && STATNICOVE_SADY.find(s => s.id === id)) {
-        btnQmRestore.classList.remove('hidden');
+      renderRestoreButton(qs);
+      if (getOfficialSet(id)) {
         btnQmDelete.disabled = true;
         btnQmDelete.title = "Základní sady nelze smazat";
       } else {
-        btnQmRestore.classList.add('hidden');
         btnQmDelete.disabled = false;
         btnQmDelete.title = "";
       }
@@ -1137,13 +1304,20 @@
         set.categories.forEach(c => {
           if (c.questionSetId) {
             const qs = questionSets.find(s => s.id === c.questionSetId);
-            if (qs) {
-              if (c.max !== qs.questions.length || c.name !== qs.name) {
+            if (qs && qs.questions.length > 0) {
+              if (c.max !== qs.questions.length || c.name !== qs.name || c.min !== 1) {
+                c.min = 1;
                 c.max = qs.questions.length;
                 c.name = qs.name;
                 modified = true;
               }
+              // Set got shorter – a result past the end would show a number with no question.
+              if (c.result !== null && c.result > c.max) {
+                c.result = null;
+                modified = true;
+              }
             } else {
+              // Set deleted or emptied → unlink, keep the card as a plain number range.
               c.questionSetId = null;
               modified = true;
             }
@@ -1158,7 +1332,7 @@
 
     btnQmAddSet.addEventListener('click', () => {
       const newQs = {
-        id: crypto.randomUUID(),
+        id: uid(),
         name: 'List otázek ' + (questionSets.length + 1),
         questions: []
       };
@@ -1174,27 +1348,24 @@
 
     btnQmRestore.addEventListener('click', () => {
       if (!qmEditingId) return;
-      const defaultSet = typeof STATNICOVE_SADY !== 'undefined' ? STATNICOVE_SADY.find(s => s.id === qmEditingId) : null;
-      if (defaultSet) {
-        if (confirm('Opravdu chcete přepsat tuto sadu původními státnicovými otázkami? Všechny vaše úpravy v tomto listu budou ztraceny.')) {
-          qmSetName.value = defaultSet.name;
-          qmSetQuestions.value = formatQuestions(defaultSet.questions);
-          qmSetQuestions.dispatchEvent(new Event('input'));
+      const defaultSet = getOfficialSet(qmEditingId);
+      const qs = questionSets.find(s => s.id === qmEditingId);
+      if (defaultSet && qs) {
+        if (confirm('Opravdu chcete nahradit tuto sadu aktuální verzí státnicových otázek? Všechny vaše úpravy v této sadě budou ztraceny.')) {
+          // Saved immediately (not just put into the textarea), so the "outdated" warning clears right away.
+          qs.name = defaultSet.name;
+          qs.questions = [...defaultSet.questions];
+          saveQuestionSets();
+          openQmEdit(qs.id);
+          updateOutdatedIndicators();
         }
       }
     });
 
-    qmSetQuestions.addEventListener('change', () => {
-      const questions = parseQuestions(qmSetQuestions.value);
-      qmSetQuestions.value = formatQuestions(questions);
-    });
+    qmSetQuestions.addEventListener('change', renumberQuestionsEditor);
 
     qmSetQuestions.addEventListener('paste', () => {
-      setTimeout(() => {
-        const questions = parseQuestions(qmSetQuestions.value);
-        qmSetQuestions.value = formatQuestions(questions);
-        qmQCount.textContent = 'Otázek: ' + questions.length;
-      }, 10);
+      setTimeout(renumberQuestionsEditor, 10);
     });
 
     btnQmSave.addEventListener('click', () => {
@@ -1205,6 +1376,8 @@
         qs.questions = parseQuestions(qmSetQuestions.value);
         saveQuestionSets();
         renderQmSetsList();
+        renderRestoreButton(qs);
+        updateOutdatedIndicators();
 
         const originalText = btnQmSave.textContent;
         btnQmSave.textContent = "Uloženo!";
@@ -1243,6 +1416,7 @@
     // Initialize
     renderAll();
     lucide.createIcons();
+    updateOutdatedIndicators();
   </script>
 </body>
 

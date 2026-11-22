@@ -27,7 +27,7 @@
   const steps = [
     {
       title: "Vítejte v novém losovátku!",
-      text: "Tato aplikace vám pomůže s losováním zkouškových otázek nebo témat. Vše probíhá lokálně ve vašem prohlížeči – přehledně a s možností plného přizpůsobení. Pojďme si ukázat základní funkce.",
+      text: "Tato aplikace vám pomůže s losováním zkouškových otázek nebo témat. Vše probíhá lokálně a s možností plného přizpůsobení. Pojďme si ukázat základní funkce.",
       visual: `
         <div class="w-full h-32 bg-indigo-50 rounded-2xl flex items-center justify-center text-[#0000dc]">
           <i data-lucide="dices" class="w-16 h-16 opacity-80"></i>
@@ -58,7 +58,7 @@
     },
     {
       title: "Sestavy okruhů",
-      text: `Pro lepší pořádek a vyšší efektivitu si můžete okruhy sdružovat do <strong>Sestav</strong> – například pro různé specializace studentů nebo komise. Novou sestavu přidáte přes tlačítko <span class="whitespace-nowrap"><strong>nastavení</strong> <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>.</span> Mezi sestavami následně přepínáte v <strong>panelu</strong> <span class="whitespace-nowrap"><strong>sestav</strong> <i data-lucide="folders" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i></span> v horní části. <strong>Dvojklikem</strong> na název sestavy ji přejmenujete.`,
+      text: `Pro větší přehlednost si můžete okruhy sdružovat do <strong>Sestav</strong> – například pro různé specializace studentů. Novou sestavu přidáte přes tlačítko <span class="whitespace-nowrap"><strong>nastavení</strong> <i data-lucide="settings" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i>.</span> Mezi sestavami následně přepínáte v <strong>panelu</strong> <span class="whitespace-nowrap"><strong>sestav</strong> <i data-lucide="folders" class="w-4 h-4 inline text-slate-400 align-sub mx-0.5"></i></span> v horní části. <strong>Dvojklikem</strong> na název sestavy ji přejmenujete.`,
       visual: `
         <div class="w-full h-40 bg-slate-50 rounded-2xl border border-slate-200 p-4 flex gap-3">
           <div class="w-1/3 bg-white rounded-xl border border-slate-200 p-2 shadow-sm flex flex-col gap-2">
@@ -202,9 +202,6 @@
   function closeTutorial() {
     overlay.classList.add('hidden');
     modalBox.classList.remove('animate-modal-in');
-    try {
-      localStorage.setItem('tutorialSeen', 'true');
-    } catch (e) { }
   }
 
   // Expose function globally so the header button can call it
@@ -218,21 +215,6 @@
 
   btnClose.addEventListener('click', closeTutorial);
 
-  // Auto-start on first visit
-  function tryAutoStart() {
-    try {
-      if (!localStorage.getItem('tutorialSeen')) {
-        setTimeout(() => {
-          window.openTutorial();
-        }, 500); // Mírné zpoždění pro plynulejší zážitek
-      }
-    } catch (e) { }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', tryAutoStart);
-  } else {
-    tryAutoStart();
-  }
+  // Tutoriál se neotevírá automaticky – jen přes tlačítko „Jak to funguje?“ v hlavičce.
 
 })();
